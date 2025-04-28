@@ -51,8 +51,11 @@ async fn profile(req: &mut Request, res: &mut Response) {
 async fn main() {
     let router = Router::new()
         .push(Router::with_path("login").post(login))
-        .hoop(jwt_auth)
-        .push(Router::with_path("profile").get(profile));
+        .push(
+            Router::new()
+                .hoop(jwt_auth)
+                .push(Router::with_path("profile").get(profile)),
+        );
 
     let acceptor = TcpListener::new("127.0.0.1:3000").bind().await;
     Server::new(acceptor).serve(router).await;
@@ -60,10 +63,6 @@ async fn main() {
 
 #[handler]
 async fn jwt_auth(req: &mut Request, res: &mut Response) {
-    let path = req.uri().path();
-    if path == "/login" {
-        return;
-    }
     if let Some(token) = req.header("Authorization") {
         println!("有token，开始校验");
         let token: &str = token;

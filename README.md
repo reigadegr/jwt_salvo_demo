@@ -9,7 +9,7 @@ sh test.sh
 ```
 - 脚本响应:
 ```txt
-{"code":0,"msg":"成功获取用户信息","data":{"user":"user1"}}
+{"code":0,"msg":"成功获取用户信息","data":{"user":{"role":"admin","sub":"user1","exp":1745857068,"iat":1745857119}}}
 ```
 
 - dev模式打印token:

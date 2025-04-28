@@ -1,0 +1,4 @@
+p, admin, /manage, GET
+p, admin, /profile, GET
+g, token-admin, admin
+g, yz666, user

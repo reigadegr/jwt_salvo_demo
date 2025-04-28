@@ -11,8 +11,10 @@ mod controller;
 mod exclusive;
 mod jwt;
 mod models;
+mod rbac;
 
 use controller::{jwt_auth, login, profile};
+use rbac::casbin::manage_casbin_hoop;
 use salvo::prelude::*;
 
 #[tokio::main]
@@ -22,6 +24,7 @@ async fn main() {
         .push(
             Router::new()
                 .hoop(jwt_auth)
+                .hoop(manage_casbin_hoop().await)
                 .push(Router::with_path("profile").get(profile)),
         );
 

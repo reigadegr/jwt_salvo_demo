@@ -11,5 +11,5 @@ done
 
 nohup rm -rf $(find ./target -name "*jwt_salvo_demo*") >/dev/null 2>&1 &
 uid=$(dumpsys package com.termux | grep appId | awk 'NR==1{print $1}' | cut -d '=' -f2)
-chown -R $uid:$uid  ./src ./*.toml ./keys
-chmod -R 0644 ./src  ./*.toml  ./keys
+chown -R $uid:$uid  ./src ./*.toml ./keys  ./casbin
+chmod -R 0644 ./src  ./*.toml  ./keys  ./casbin

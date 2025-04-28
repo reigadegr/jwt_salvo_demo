@@ -1,6 +1,7 @@
 use crate::{
     exclusive::write_response::{render_error, render_success},
     jwt::{generate_token, validate_token},
+    models::Claims,
 };
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
@@ -18,7 +19,8 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     let login_req: LoginRequest = req.parse_json().await.unwrap_or_default();
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {
-        let token = generate_token(login_req.username).unwrap_or_default();
+        let role = "admin";
+        let token = generate_token(role, login_req.username).unwrap_or_default();
         return render_success(res, json!({ "token": token }), "成功生成token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);
@@ -27,7 +29,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
 
 #[handler]
 pub async fn profile(res: &mut Response, depot: &mut Depot) {
-    match depot.get::<String>("user") {
+    match depot.get::<Claims>("user") {
         Ok(user) => return render_success(res, json!({ "user": user  }), "成功获取用户信息"),
         Err(_) => return render_error(res, "Can not get now user."),
     }
@@ -51,7 +53,7 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
     let jwt_token = &token[pos + 1..];
 
     if let Ok(claims) = validate_token(jwt_token) {
-        depot.insert("user", claims.sub);
+        depot.insert("user", claims);
     } else {
         res.status_code(StatusCode::FORBIDDEN);
         return render_error(res, "Invalid token");

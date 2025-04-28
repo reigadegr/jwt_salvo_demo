@@ -15,6 +15,7 @@ use jwt::{generate_token, validate_token};
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
 use serde_json::json;
+use stringzilla::sz;
 
 #[derive(Deserialize)]
 struct LoginRequest {
@@ -66,15 +67,22 @@ async fn main() {
 
 #[handler]
 async fn jwt_auth(req: &mut Request, res: &mut Response) {
-    if let Some(token) = req.header("Authorization") {
-        let token: &str = token;
-        let token = token.split_whitespace().last().unwrap();
-        if validate_token(token).is_err() {
-            res.status_code(StatusCode::FORBIDDEN);
-            return render_error(res, "Invalid token");
-        }
-    } else {
+    let Some(token) = req.header("Authorization") else {
         res.status_code(StatusCode::UNAUTHORIZED);
         return render_error(res, "No token provided");
+    };
+
+    let token: &str = token;
+    #[cfg(debug_assertions)]
+    println!("{token}");
+
+    let Some(pos) = sz::find(token, " ") else {
+        res.status_code(StatusCode::UNAUTHORIZED);
+        return render_error(res, "Invalid token format");
+    };
+    let jwt_token = &token[pos + 1..];
+    if validate_token(jwt_token).is_err() {
+        res.status_code(StatusCode::FORBIDDEN);
+        return render_error(res, "Invalid token");
     }
 }

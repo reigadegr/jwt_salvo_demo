@@ -29,7 +29,7 @@ async fn login(req: &mut Request, res: &mut Response) {
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {
         let token = generate_token(&login_req.username).unwrap();
-        return render_success(res, json!({ "token": token }), "成功获取用户信息");
+        return render_success(res, json!({ "token": token }), "成功生成token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);
     return render_error(res, "Invalid credentials");

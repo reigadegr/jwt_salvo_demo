@@ -8,9 +8,9 @@ use simd_json::json;
 use stringzilla::sz;
 
 #[derive(Deserialize, Default)]
-struct LoginRequest {
-    username: String,
-    password: String,
+struct LoginRequest<'a> {
+    username: &'a str,
+    password: &'a str,
 }
 
 #[handler]
@@ -18,7 +18,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     let login_req: LoginRequest = req.parse_json().await.unwrap_or_default();
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {
-        let token = generate_token(&login_req.username).unwrap_or_default();
+        let token = generate_token(login_req.username).unwrap_or_default();
         return render_success(res, json!({ "token": token }), "成功生成token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);

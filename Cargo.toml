@@ -16,7 +16,7 @@ casbin = "2.10.1"
 anyhow = "1.0.98"
 
 [profile.dev]
-debug = 0
+debug = true
 debug-assertions = true
 panic = "abort"
 incremental = true

@@ -1,6 +1,6 @@
 use crate::config::result::ResData;
 use salvo::prelude::{Json, Response};
-use serde_json::json;
+use simd_json::json;
 
 #[inline]
 pub fn render_success<T: serde::Serialize>(res: &mut Response, data: T, msg: &str) {

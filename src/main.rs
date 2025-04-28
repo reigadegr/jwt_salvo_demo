@@ -14,7 +14,7 @@ use exclusive::write_response::{render_error, render_success};
 use jwt::{generate_token, validate_token};
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
-use serde_json::json;
+use simd_json::json;
 use stringzilla::sz;
 
 #[derive(Deserialize)]

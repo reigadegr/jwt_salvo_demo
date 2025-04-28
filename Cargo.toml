@@ -10,3 +10,19 @@ serde_json = "1.0.140"
 serde = { version = "1.0.219", features = ["derive"] }
 chrono = "0.4.40"
 tokio =  { version = "1.44.2", features = ["full"] }
+
+[profile.dev]
+debug = 0
+debug-assertions = true
+panic = "abort"
+incremental = true
+
+[profile.release]
+overflow-checks = false
+codegen-units = 1
+lto = "fat"
+opt-level = 3
+strip = true
+debug = 0
+debug-assertions = false
+incremental = true

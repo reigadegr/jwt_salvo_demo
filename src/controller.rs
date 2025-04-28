@@ -7,7 +7,7 @@ use serde::Deserialize;
 use simd_json::json;
 use stringzilla::sz;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 struct LoginRequest {
     username: String,
     password: String,
@@ -15,10 +15,10 @@ struct LoginRequest {
 
 #[handler]
 pub async fn login(req: &mut Request, res: &mut Response) {
-    let login_req: LoginRequest = req.parse_json().await.unwrap();
+    let login_req: LoginRequest = req.parse_json().await.unwrap_or_default();
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {
-        let token = generate_token(&login_req.username).unwrap();
+        let token = generate_token(&login_req.username).unwrap_or_default();
         return render_success(res, json!({ "token": token }), "成功生成token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);
@@ -26,22 +26,13 @@ pub async fn login(req: &mut Request, res: &mut Response) {
 }
 
 #[handler]
-pub async fn profile(req: &mut Request, res: &mut Response) {
-    if let Some(token) = req.header("Authorization") {
-        let token: &str = token;
-        let token = token.split_whitespace().last().unwrap();
-        if let Ok(claims) = validate_token(token) {
-            return render_success(res, json!({ "user": claims  }), "成功获取用户信息");
-        }
-        res.status_code(StatusCode::FORBIDDEN);
-        return render_error(res, "Invalid token");
-    }
-    res.status_code(StatusCode::UNAUTHORIZED);
-    return render_error(res, "No token provided");
+pub async fn profile(res: &mut Response, depot: &mut Depot) {
+    let user = depot.get::<String>("user").unwrap();
+    return render_success(res, json!({ "user": user  }), "成功获取用户信息");
 }
 
 #[handler]
-pub async fn jwt_auth(req: &mut Request, res: &mut Response) {
+pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) {
     let Some(token) = req.header("Authorization") else {
         res.status_code(StatusCode::UNAUTHORIZED);
         return render_error(res, "No token provided");
@@ -56,7 +47,10 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response) {
         return render_error(res, "Invalid token format");
     };
     let jwt_token = &token[pos + 1..];
-    if validate_token(jwt_token).is_err() {
+
+    if let Ok(claims) = validate_token(jwt_token) {
+        depot.insert("user", claims.sub);
+    } else {
         res.status_code(StatusCode::FORBIDDEN);
         return render_error(res, "Invalid token");
     }

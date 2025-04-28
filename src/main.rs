@@ -6,8 +6,11 @@
     clippy::missing_panics_doc
 )]
 
+mod config;
+mod exclusive;
 mod jwt;
 mod models;
+use exclusive::write_response::{render_error, render_success};
 use jwt::{generate_token, validate_token};
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
@@ -38,13 +41,13 @@ async fn profile(req: &mut Request, res: &mut Response) {
         let token: &str = token;
         let token = token.split_whitespace().last().unwrap();
         if let Ok(claims) = validate_token(token) {
-            return res.render(Json(json!({ "user": claims })));
+            return render_success(res, json!({ "user": claims  }), "成功获取用户信息");
         }
         res.status_code(StatusCode::FORBIDDEN);
-        return res.render(Json(json!({ "message": "Invalid token" })));
+        return render_error(res, "Invalid token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);
-    return res.render(Json(json!({ "message": "No token provided" })));
+    return render_error(res, "No token provided");
 }
 
 #[tokio::main]
@@ -64,16 +67,14 @@ async fn main() {
 #[handler]
 async fn jwt_auth(req: &mut Request, res: &mut Response) {
     if let Some(token) = req.header("Authorization") {
-        println!("有token，开始校验");
         let token: &str = token;
         let token = token.split_whitespace().last().unwrap();
         if validate_token(token).is_err() {
-            println!("有token，过期了");
             res.status_code(StatusCode::FORBIDDEN);
-            return res.render(Json(json!({ "message": "Invalid token" })));
+            return render_error(res, "Invalid token");
         }
     } else {
-        println!("no token拦截");
-        return res.render(Json(json!({ "message": "中间件拦截" })));
+        res.status_code(StatusCode::UNAUTHORIZED);
+        return render_error(res, "No token provided");
     }
 }

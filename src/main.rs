@@ -38,15 +38,13 @@ async fn profile(req: &mut Request, res: &mut Response) {
         let token: &str = token;
         let token = token.split_whitespace().last().unwrap();
         if let Ok(claims) = validate_token(token) {
-            res.render(Json(json!({ "user": claims })));
-        } else {
-            res.status_code(StatusCode::FORBIDDEN);
-            res.render(Json(json!({ "message": "Invalid token" })));
+            return res.render(Json(json!({ "user": claims })));
         }
-    } else {
-        res.status_code(StatusCode::UNAUTHORIZED);
-        res.render(Json(json!({ "message": "No token provided" })));
+        res.status_code(StatusCode::FORBIDDEN);
+        return res.render(Json(json!({ "message": "Invalid token" })));
     }
+    res.status_code(StatusCode::UNAUTHORIZED);
+    return res.render(Json(json!({ "message": "No token provided" })));
 }
 
 #[tokio::main]

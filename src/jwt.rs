@@ -5,7 +5,8 @@ use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode,
 const SECRET_KEY: &[u8] = b"your_secret_key";
 
 pub fn generate_token(user_id: &str) -> Result<String, Error> {
-    let claims = Claims::new(user_id.to_string(), Utc::now() + Duration::hours(1));
+    let reset_timesmap = Utc::now() - Duration::seconds(61);
+    let claims = Claims::new(user_id.to_string(), reset_timesmap + Duration::seconds(10));
     encode(
         &Header::default(),
         &claims,

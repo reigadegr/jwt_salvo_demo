@@ -14,5 +14,6 @@ export RUSTFLAGS="-C default-linker-libraries \
 -C link-args=-fomit-frame-pointer \
 -C link-args=-Wl,-z,relro,-x,-s,--strip-all,-z,now
 " 
-
+export RUSTFLAGS="-C default-linker-libraries \
+"
 cargo-zigbuild +nightly zigbuild --target aarch64-unknown-linux-musl -Z trim-paths -Z build-std --release --verbose  --

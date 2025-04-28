@@ -27,8 +27,10 @@ pub async fn login(req: &mut Request, res: &mut Response) {
 
 #[handler]
 pub async fn profile(res: &mut Response, depot: &mut Depot) {
-    let user = depot.get::<String>("user").unwrap();
-    return render_success(res, json!({ "user": user  }), "成功获取用户信息");
+    match depot.get::<String>("user") {
+        Ok(user) => return render_success(res, json!({ "user": user  }), "成功获取用户信息"),
+        Err(_) => return render_error(res, "Can not get now user."),
+    }
 }
 
 #[handler]

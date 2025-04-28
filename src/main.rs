@@ -8,9 +8,8 @@
 
 mod jwt;
 mod models;
-use crate::jwt::{generate_token, validate_token};
-use salvo::http::StatusCode;
-use salvo::prelude::*;
+use jwt::{generate_token, validate_token};
+use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
 use serde_json::json;
 

@@ -9,11 +9,7 @@ const PUBLIC_KEY: &[u8] = include_bytes!("../keys/public_key.pem");
 
 pub fn generate_token(role: &str, user_id: &str) -> Result<String, Error> {
     let reset_timesmap = Utc::now() - Duration::seconds(61);
-    let claims = Claims::new(
-        role.to_string(),
-        user_id.to_string(),
-        reset_timesmap + Duration::seconds(10),
-    );
+    let claims = Claims::new(role, user_id, reset_timesmap + Duration::seconds(10));
     encode(
         &Header::new(Algorithm::EdDSA),
         &claims,

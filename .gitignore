@@ -2,3 +2,4 @@
 Cargo.lock
 **/*.bak
 output
+*txt

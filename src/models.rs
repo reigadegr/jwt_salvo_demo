@@ -14,10 +14,10 @@ pub struct Claims {
 }
 
 impl Claims {
-    pub fn new(role: String, sub: String, exp: DateTime<Utc>) -> Self {
+    pub fn new(role: &str, sub: &str, exp: DateTime<Utc>) -> Self {
         Self {
-            role,
-            sub,
+            role: role.to_owned(),
+            sub: sub.to_owned(),
             exp: exp.timestamp(),
             iat: Utc::now().timestamp(),
         }

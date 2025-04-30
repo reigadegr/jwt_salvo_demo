@@ -21,7 +21,6 @@ use std::time::Duration;
 #[tokio::main]
 async fn main() {
     init_model().await;
-
     let router = Router::new()
         .hoop(max_concurrency(200))
         .hoop(Timeout::new(Duration::from_secs(5)))

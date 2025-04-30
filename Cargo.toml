@@ -15,6 +15,7 @@ salvo-casbin = "0.73.3"
 anyhow = "1.0.98"
 once_cell = "1.21.3"
 casbin = "2.10.1"
+redis = "0.30.0"
 
 [profile.dev]
 debug = true

@@ -16,10 +16,7 @@ fn get_db_con() -> Client {
 
 #[allow(dead_code)]
 pub fn redis_write_and_rm<T: redis::ToRedisArgs>(key: &str, value: T, time: i64) -> Result<()> {
-    // connect to redis
-    println!("开始连接redis_write_and_rm");
     let mut con = get_db_con();
-    println!("成功连接");
     // throw away the result, just make sure it does not fail
     let _: () = con.set(key, value)?;
     let _: () = con.expire(key, time)?;
@@ -28,9 +25,7 @@ pub fn redis_write_and_rm<T: redis::ToRedisArgs>(key: &str, value: T, time: i64)
 
 #[allow(dead_code)]
 pub fn redis_read(key: &str) -> Result<String> {
-    println!("开始连接redis_read");
     let mut con = get_db_con();
-    println!("成功连接");
     let rs = con.get(key)?;
     Ok(rs)
 }

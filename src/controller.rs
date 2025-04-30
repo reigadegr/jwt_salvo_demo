@@ -1,4 +1,5 @@
 use crate::{
+    config::redis::{redis_read, redis_write},
     exclusive::write_response::{render_error, render_success},
     jwt::{generate_token, validate_token},
     models::Claims,
@@ -21,7 +22,14 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     if login_req.username == "user1" && login_req.password == "password1" {
         let role = "admin";
         let token = generate_token(role, login_req.username).unwrap_or_default();
-        return render_success(res, json!({ "token": token }), "成功生成token");
+
+        // 把token保存到Redis
+        let save_redis = redis_write(login_req.username, &token);
+        if save_redis.is_err() {
+            res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
+            return render_error(res, "Server has some error.");
+        }
+        return render_success(res, json!({ "token": &token }), "成功生成token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);
     return render_error(res, "Invalid credentials");
@@ -53,7 +61,15 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
     let jwt_token = &token[pos + 1..];
 
     if let Ok(claims) = validate_token(jwt_token) {
-        depot.insert("user", claims);
+        match redis_read(&claims.sub) {
+            Ok(rs_val) if rs_val == jwt_token => {
+                depot.insert("user", claims);
+            }
+            _ => {
+                res.status_code(StatusCode::UNAUTHORIZED);
+                return render_error(res, "Token has expired.");
+            }
+        }
     } else {
         res.status_code(StatusCode::FORBIDDEN);
         return render_error(res, "Invalid token");

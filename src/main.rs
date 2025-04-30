@@ -16,12 +16,14 @@ mod rbac;
 use controller::{jwt_auth, login, profile};
 use rbac::casbin::{init_model, manage_casbin_hoop};
 use salvo::prelude::*;
+use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
     init_model().await;
 
     let router = Router::new()
+        .hoop(Timeout::new(Duration::from_secs(5)))
         .push(Router::with_path("login").post(login))
         .push(
             Router::new()

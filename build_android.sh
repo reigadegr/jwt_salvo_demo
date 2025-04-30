@@ -15,4 +15,8 @@ export RUSTFLAGS="-C default-linker-libraries \
 -C link-args=-Wl,--icf=all,-z,relro,--pack-dyn-relocs=android+relr,-x,-s,--strip-all,-z,now
 " 
 
-cargo +nightly ndk -p 35 -t arm64-v8a build --target aarch64-linux-android -Z trim-paths --verbose  --
+if [ "$1" = "release" ] || [ "$1" = "r" ]; then
+    cargo +nightly ndk -p 35 -t arm64-v8a build --target aarch64-linux-android -Z trim-paths --verbose -r -Z build-std --
+else
+    cargo +nightly ndk -p 35 -t arm64-v8a build --target aarch64-linux-android -Z trim-paths --verbose  --
+fi

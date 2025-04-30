@@ -14,11 +14,13 @@ mod models;
 mod rbac;
 
 use controller::{jwt_auth, login, profile};
-use rbac::casbin::manage_casbin_hoop;
+use rbac::casbin::{init_model, manage_casbin_hoop};
 use salvo::prelude::*;
 
 #[tokio::main]
 async fn main() {
+    init_model().await;
+
     let router = Router::new()
         .push(Router::with_path("login").post(login))
         .push(

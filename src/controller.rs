@@ -57,7 +57,7 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
     let jwt_token: &str = sz::find(token, " ").map_or(token, |p| token[p + 1..].trim_start());
 
     if let Ok(claims) = validate_token(jwt_token) {
-        match redis_read(&claims.sub) {
+        match redis_read(&claims.username) {
             Ok(redis_token) if redis_token == jwt_token => {
                 depot.insert("user", claims);
             }

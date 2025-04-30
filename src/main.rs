@@ -23,6 +23,7 @@ async fn main() {
     init_model().await;
 
     let router = Router::new()
+        .hoop(max_concurrency(200))
         .hoop(Timeout::new(Duration::from_secs(5)))
         .push(Router::with_path("login").post(login))
         .push(

@@ -13,7 +13,7 @@ static DECODE_KEY: Lazy<DecodingKey> = Lazy::new(|| DecodingKey::from_ed_pem(PUB
 
 pub fn generate_token(role: &str, user_id: &str) -> Result<String, Error> {
     let reset_timesmap = Utc::now() - Duration::seconds(61);
-    let claims = Claims::new(role, user_id, reset_timesmap + Duration::seconds(10));
+    let claims = Claims::new(role, user_id, reset_timesmap + Duration::seconds(20));
     encode(&Header::new(Algorithm::EdDSA), &claims, &ENCODE_KEY)
 }
 

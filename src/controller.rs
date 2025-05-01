@@ -61,9 +61,15 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
             Ok(redis_token) if redis_token == jwt_token => {
                 depot.insert("user", claims);
             }
-            _ => {
+            Ok(_) => {
+                // Token存在但不匹配，返回401 Unauthorized
                 res.status_code(StatusCode::UNAUTHORIZED);
                 return render_error(res, "Token has expired.");
+            }
+            Err(_) => {
+                // Redis操作失败，返回500 InternalServerError
+                res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
+                return render_error(res, "Server internal error");
             }
         }
     } else {

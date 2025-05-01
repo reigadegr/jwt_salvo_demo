@@ -1,12 +1,12 @@
-use crate::models::Claims;
+use super::models::Claims;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode, errors::Error,
 };
 use once_cell::sync::Lazy;
 
-const PRIVATE_KEY: &[u8] = include_bytes!("../keys/private_key.pem");
-const PUBLIC_KEY: &[u8] = include_bytes!("../keys/public_key.pem");
+const PRIVATE_KEY: &[u8] = include_bytes!("../../keys/private_key.pem");
+const PUBLIC_KEY: &[u8] = include_bytes!("../../keys/public_key.pem");
 
 static ENCODE_KEY: Lazy<EncodingKey> = Lazy::new(|| EncodingKey::from_ed_pem(PRIVATE_KEY).unwrap());
 static DECODE_KEY: Lazy<DecodingKey> = Lazy::new(|| DecodingKey::from_ed_pem(PUBLIC_KEY).unwrap());

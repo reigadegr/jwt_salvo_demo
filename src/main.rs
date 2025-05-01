@@ -10,7 +10,6 @@ mod config;
 mod controller;
 mod exclusive;
 mod jwt;
-mod models;
 mod rbac;
 
 use config::redis::init_redis_pool;

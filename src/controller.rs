@@ -1,8 +1,10 @@
 use crate::{
     config::redis::{redis_read, redis_write_and_rm},
     exclusive::write_response::{render_error, render_success},
-    jwt::{generate_token, validate_token},
-    models::Claims,
+    jwt::{
+        models::Claims,
+        secert_key::{generate_token, validate_token},
+    },
 };
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;

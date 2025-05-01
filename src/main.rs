@@ -13,7 +13,8 @@ mod jwt;
 mod rbac;
 
 use config::redis::init_redis_pool;
-use controller::{jwt_auth, login, profile};
+use controller::{login, profile};
+use jwt::middleware::jwt_auth;
 use rbac::casbin::{init_model, manage_casbin_hoop};
 use salvo::prelude::*;
 use std::time::Duration;

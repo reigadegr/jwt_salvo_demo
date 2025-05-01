@@ -1,6 +1,5 @@
 use crate::{
-    config::redis::redis_read,
-    exclusive::write_response::render_error,
+    config::redis::redis_read, exclusive::write_response::render_error,
     jwt::secert_key::validate_token,
 };
 use salvo::{http::StatusCode, prelude::*};

@@ -23,7 +23,10 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     if login_req.username == "user1" && login_req.password == "password1" {
         let role = "admin";
         let (token, exp_time) = generate_token(role, login_req.username);
-        let token = token.unwrap_or_default();
+        let Ok(token) = token else {
+            res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
+            return render_error(res, "Server has some error.");
+        };
         // 把token保存到Redis
         let save_token = redis_write_and_rm(login_req.username, &token, exp_time).await;
         if save_token.is_err() {

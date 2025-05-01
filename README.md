@@ -9,10 +9,10 @@ sh test.sh
 ```
 - 脚本响应:
 ```txt
-{"code":0,"msg":"成功获取用户信息","data":{"user":{"role":"admin","sub":"user1","exp":1745857068,"iat":1745857119}}}
+{"code":0,"msg":"成功获取用户信息","data":{"role":"admin","username":"user1","exp":1746085855}}
 ```
 
 - dev模式打印token:
 ```txt
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTc0NTg0MzkxMiwiaWF0IjoxNzQ1ODQzOTYzfQ.YOKCzIiadZ3JqgJezUOn6kSN9hwZFdZq2oIKQrvHsg9p5_asPf9Rf9XTl_7QRgepUAdk2-m5bwL750VT6ZZKAWtlkc_bwhqFmhIEk2fqQ3voGqaM2eynoIS5k55I_oolgQup_aohPUa1eCuSoSVTWo6gGqkb7EAKQzQNM-wqDvdSgovyhtZ5s6QGotQVlUvc9jF0DfJdiHDcWarFYbRt7syfVAGKaQXsuvUQfEQkjPztWr7WEGlyib3sI7UVM33OwW6P1a58H7ci3svBCP8XtGQ2ikSwP205aRpdH9WRYwcsMbFllMJyIrCRBB44slJytRVOPS687uyTfhkz1RCP7Q
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.eyJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6InVzZXIxIiwiZXhwIjoxNzQ2MDg1ODU1fQ.YJWsi_2L62QxHE8PBvbX1p_oEUAeUDwd-9I6eqkFzfod_aZRX60V-HF4Xk7PPelelKZ5EnuLU8anloA1vHUQBA
 ```

@@ -2,7 +2,10 @@ use crate::config::result::ResData;
 use salvo::prelude::{Json, Response};
 use simd_json::json;
 
-pub fn render_success<T: serde::Serialize>(res: &mut Response, data: T, msg: &str) {
+pub fn render_success<T>(res: &mut Response, data: T, msg: &str)
+where
+    T: serde::Serialize,
+{
     let data = ResData::success(data, msg);
     res.render(Json(json!(data)));
 }

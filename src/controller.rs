@@ -6,7 +6,6 @@ use crate::{
 };
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
-use simd_json::json;
 use stringzilla::sz;
 
 #[derive(Deserialize, Default)]
@@ -29,7 +28,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
             res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
             return render_error(res, "Server has some error.");
         }
-        return render_success(res, json!({ "token": &token }), "成功生成token");
+        return render_success(res, &token, "成功生成token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);
     return render_error(res, "Invalid credentials");
@@ -38,7 +37,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
 #[handler]
 pub async fn profile(res: &mut Response, depot: &mut Depot) {
     match depot.get::<Claims>("user") {
-        Ok(user) => return render_success(res, json!({ "user": user  }), "成功获取用户信息"),
+        Ok(user) => return render_success(res, user, "成功获取用户信息"),
         Err(_) => return render_error(res, "Can not get now user."),
     }
 }

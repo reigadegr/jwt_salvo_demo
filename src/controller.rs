@@ -1,5 +1,5 @@
 use crate::{
-    config::redis::{redis_read, redis_write},
+    config::redis::{redis_read, redis_write_and_rm},
     exclusive::write_response::{render_error, render_success},
     jwt::{generate_token, validate_token},
     models::Claims,
@@ -20,10 +20,10 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {
         let role = "admin";
-        let token = generate_token(role, login_req.username).unwrap_or_default();
-
+        let (token, exp_time) = generate_token(role, login_req.username);
+        let token = token.unwrap_or_default();
         // 把token保存到Redis
-        let save_token = redis_write(login_req.username, &token).await;
+        let save_token = redis_write_and_rm(login_req.username, &token, exp_time).await;
         if save_token.is_err() {
             res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
             return render_error(res, "Server has some error.");

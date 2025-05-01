@@ -8,7 +8,6 @@
 
 mod config;
 mod controller;
-mod exclusive;
 mod jwt;
 mod rbac;
 

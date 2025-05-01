@@ -1,6 +1,8 @@
 use crate::{
-    config::redis::redis_write_and_rm,
-    exclusive::write_response::{render_error, render_success},
+    config::{
+        redis::redis_write_and_rm,
+        write_response::{render_error, render_success},
+    },
     jwt::{models::Claims, secert_key::generate_token},
 };
 use salvo::{http::StatusCode, prelude::*};

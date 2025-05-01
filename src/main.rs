@@ -13,6 +13,7 @@ mod jwt;
 mod models;
 mod rbac;
 
+use config::redis::init_redis_pool;
 use controller::{jwt_auth, login, profile};
 use rbac::casbin::{init_model, manage_casbin_hoop};
 use salvo::prelude::*;
@@ -21,6 +22,7 @@ use std::time::Duration;
 #[tokio::main]
 async fn main() {
     init_model().await;
+    init_redis_pool().await;
     let router = Router::new()
         .hoop(max_concurrency(200))
         .hoop(Timeout::new(Duration::from_secs(5)))

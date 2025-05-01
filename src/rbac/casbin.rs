@@ -9,11 +9,11 @@ use salvo_casbin::{CasbinHoop, CasbinVals};
 use tokio::sync::OnceCell;
 
 const POLICY: &str = include_str!("../../casbin/rbac_with_pattern_policy.csv");
+const MODEL_CFG: &str = include_str!("../../casbin/rbac_with_pattern_model.conf");
 static MODEL: OnceCell<DefaultModel> = OnceCell::const_new();
 
 pub async fn init_model() {
-    let m = include_str!("../../casbin/rbac_with_pattern_model.conf");
-    let m = DefaultModel::from_str(m).await.unwrap();
+    let m = DefaultModel::from_str(MODEL_CFG).await.unwrap();
     MODEL.get_or_init(|| async { m }).await;
 }
 

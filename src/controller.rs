@@ -34,13 +34,13 @@ pub async fn login(req: &mut Request, res: &mut Response) {
         return render_success(res, &token, "成功生成token");
     }
     res.status_code(StatusCode::UNAUTHORIZED);
-    return render_error(res, "Invalid credentials");
+    render_error(res, "Invalid credentials");
 }
 
 #[handler]
 pub async fn profile(res: &mut Response, depot: &mut Depot) {
     match depot.get::<Claims>("user") {
-        Ok(user) => return render_success(res, user, "成功获取用户信息"),
-        Err(_) => return render_error(res, "Can not get now user."),
+        Ok(user) => render_success(res, user, "成功获取用户信息"),
+        Err(_) => render_error(res, "Can not get now user."),
     }
 }

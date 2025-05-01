@@ -4,3 +4,4 @@ Cargo.lock
 output
 *txt
 **/*dump.rdb*
+.idea

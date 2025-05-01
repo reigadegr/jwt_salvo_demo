@@ -10,18 +10,18 @@ async fn get_db_con() -> Result<MultiplexedConnection, RedisError> {
     REDIS_DB.get_multiplexed_async_connection().await
 }
 
-// #[allow(dead_code)]
-// pub async fn redis_write_and_rm<T: redis::ToRedisArgs>(
-// key: &str,
-// value: T,
-// time: i64,
-// ) -> Result<()> {
-// let mut con = get_db_con().await?;
-// // throw away the result, just make sure it does not fail
-// let _: () = con.set(key, value).await?;
-// let _: () = con.expire(key, time).await?;
-// Ok(())
-// }
+#[allow(dead_code)]
+pub async fn redis_write_and_rm<T: redis::ToRedisArgs + std::marker::Sync + std::marker::Send>(
+    key: &str,
+    value: T,
+    time: i64,
+) -> Result<()> {
+    let mut con = get_db_con().await?;
+    // throw away the result, just make sure it does not fail
+    let _: () = con.set(key, value).await?;
+    let _: () = con.expire(key, time).await?;
+    Ok(())
+}
 
 pub async fn redis_read(key: &str) -> Result<String> {
     let mut con = get_db_con().await?;
@@ -29,13 +29,12 @@ pub async fn redis_read(key: &str) -> Result<String> {
     Ok(rs)
 }
 
-// #[allow(dead_code)]
-// pub async fn redis_delete(key: &str) -> Result<()> {
-// let mut con = get_db_con().await?;
-// let _: () = con.del(key).await?;
-
-// Ok(())
-// }
+#[allow(dead_code)]
+pub async fn redis_delete(key: &str) -> Result<()> {
+    let mut con = get_db_con().await?;
+    let _: () = con.del(key).await?;
+    Ok(())
+}
 
 pub async fn redis_write<T: redis::ToRedisArgs + std::marker::Send + std::marker::Sync>(
     key: &str,

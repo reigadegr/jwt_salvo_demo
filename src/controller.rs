@@ -24,7 +24,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
         let token = generate_token(role, login_req.username).unwrap_or_default();
 
         // 把token保存到Redis
-        let save_token = redis_write(login_req.username, &token);
+        let save_token = redis_write(login_req.username, &token).await;
         if save_token.is_err() {
             res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
             return render_error(res, "Server has some error.");
@@ -57,7 +57,7 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
     let jwt_token: &str = sz::find(token, " ").map_or(token, |p| token[p + 1..].trim_start());
 
     if let Ok(claims) = validate_token(jwt_token) {
-        match redis_read(&claims.username) {
+        match redis_read(&claims.username).await {
             Ok(redis_token) if redis_token == jwt_token => {
                 depot.insert("user", claims);
             }

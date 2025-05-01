@@ -1,7 +1,7 @@
 use anyhow::{Result, anyhow};
 use bb8::{Pool, PooledConnection, RunError};
 use bb8_redis::RedisConnectionManager;
-use redis::{AsyncCommands, RedisError};
+use redis::{AsyncCommands, RedisError, ToRedisArgs};
 use std::time::Duration;
 use tokio::sync::OnceCell;
 
@@ -43,25 +43,21 @@ pub async fn redis_read(key: &str) -> Result<String> {
     Ok(rs)
 }
 
-pub async fn redis_write<T: redis::ToRedisArgs + std::marker::Send + std::marker::Sync>(
-    key: &str,
-    value: T,
-) -> Result<()> {
-    // Connect to Redis
+pub async fn redis_write<T>(key: &str, value: T) -> Result<()>
+where
+    T: ToRedisArgs + Send + Sync,
+{
     let mut con = get_db_con().await?;
-    // Throw away the result, just make sure it does not fail
     let _: () = con.set(key, value).await?;
     Ok(())
 }
 
 #[allow(dead_code)]
-pub async fn redis_write_and_rm<T: redis::ToRedisArgs + std::marker::Sync + std::marker::Send>(
-    key: &str,
-    value: T,
-    time: i64,
-) -> Result<()> {
+pub async fn redis_write_and_rm<T>(key: &str, value: T, time: i64) -> Result<()>
+where
+    T: ToRedisArgs + Send + Sync,
+{
     let mut con = get_db_con().await?;
-    // throw away the result, just make sure it does not fail
     let _: () = con.set(key, value).await?;
     let _: () = con.expire(key, time).await?;
     Ok(())

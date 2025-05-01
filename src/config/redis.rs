@@ -1,23 +1,29 @@
 use anyhow::Result;
+use deadpool_redis::{
+    Config, Connection, Pool, PoolError, Runtime,
+    redis::{self, AsyncCommands},
+};
 use once_cell::sync::Lazy;
-use redis::{AsyncCommands, Client, RedisError, aio::MultiplexedConnection};
 
 const REDIS_URI: &str = "redis://127.0.0.1:6379/";
 
-static REDIS_DB: Lazy<Client> = Lazy::new(|| Client::open(REDIS_URI).expect("redis连接失败"));
+static REDIS_POOL: Lazy<Pool> = Lazy::new(|| {
+    let cfg = Config::from_url(REDIS_URI);
+    cfg.create_pool(Some(Runtime::Tokio1))
+        .expect("创建Redis连接池失败")
+});
 
-async fn get_db_con() -> Result<MultiplexedConnection, RedisError> {
-    REDIS_DB.get_multiplexed_async_connection().await
+async fn get_db_con() -> Result<Connection, PoolError> {
+    REDIS_POOL.get().await
 }
 
 #[allow(dead_code)]
-pub async fn redis_write_and_rm<T: redis::ToRedisArgs + std::marker::Sync + std::marker::Send>(
+pub async fn redis_write_and_rm<T: redis::ToRedisArgs + Send + Sync>(
     key: &str,
     value: T,
     time: i64,
 ) -> Result<()> {
     let mut con = get_db_con().await?;
-    // throw away the result, just make sure it does not fail
     let _: () = con.set(key, value).await?;
     let _: () = con.expire(key, time).await?;
     Ok(())
@@ -25,7 +31,7 @@ pub async fn redis_write_and_rm<T: redis::ToRedisArgs + std::marker::Sync + std:
 
 pub async fn redis_read(key: &str) -> Result<String> {
     let mut con = get_db_con().await?;
-    let rs = con.get(key).await?;
+    let rs: String = con.get(key).await?;
     Ok(rs)
 }
 
@@ -36,13 +42,8 @@ pub async fn redis_delete(key: &str) -> Result<()> {
     Ok(())
 }
 
-pub async fn redis_write<T: redis::ToRedisArgs + std::marker::Send + std::marker::Sync>(
-    key: &str,
-    value: T,
-) -> Result<()> {
-    // Connect to Redis
+pub async fn redis_write<T: redis::ToRedisArgs + Send + Sync>(key: &str, value: T) -> Result<()> {
     let mut con = get_db_con().await?;
-    // Throw away the result, just make sure it does not fail
     let _: () = con.set(key, value).await?;
     Ok(())
 }

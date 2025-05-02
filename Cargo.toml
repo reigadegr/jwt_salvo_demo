@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-salvo = { version = "0.78.0", features = ["timeout", "concurrency-limiter"] }
+salvo = { version = "0.78.0", features = [
+  "timeout",
+  "concurrency-limiter",
+  "http2-cleartext",
+] }
 jsonwebtoken = "9.3.1"
 serde = { version = "1.0.219", features = ["derive"] }
 chrono = "0.4.40"

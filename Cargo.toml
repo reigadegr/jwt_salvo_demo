@@ -22,6 +22,11 @@ casbin = "2.10.1"
 redis = { version = "0.30.0", features = ["tokio-comp"] }
 bb8-redis = "0.22.0"
 bb8 = "0.9.0"
+mimalloc = { version = "0.1.46", features = [
+    "local_dynamic_tls",
+    "no_thp",
+    "override",
+] }
 
 [profile.dev]
 debug = true

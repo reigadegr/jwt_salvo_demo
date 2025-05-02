@@ -18,6 +18,9 @@ use rbac::casbin::{init_model, manage_casbin_hoop};
 use salvo::prelude::*;
 use std::time::Duration;
 
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 #[tokio::main]
 async fn main() {
     init_model().await;

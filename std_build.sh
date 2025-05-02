@@ -2,12 +2,12 @@ cargo fmt
 rm -rf $(find ./target/aarch64-linux-android/release -name "*jwt_salvo_demo*")
 
 export RUSTFLAGS="-C default-linker-libraries \
--Z external-clangrt \
--Z macro-backtrace \
--Z remap-cwd-prefix=. \
--Z dep-info-omit-d-target \
+-C llvm-args=-enable-ml-inliner=release \
+-C llvm-args=-inliner-interactive-include-default \
+-C llvm-args=-ml-inliner-model-selector=arm64-mixed \
+-C llvm-args=-ml-inliner-skip-policy=if-caller-not-cold \
 -C link-args=-fomit-frame-pointer \
 -C link-args=-Wl,-z,relro,-x,-s,--strip-all,-z,now
 " 
 
-cargo +nightly run -r -Z build-std -Z trim-paths --verbose  --
+cargo build -r --verbose  --

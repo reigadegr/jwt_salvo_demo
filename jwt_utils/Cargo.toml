@@ -10,6 +10,5 @@ jsonwebtoken = { workspace = true }
 serde = { workspace = true }
 chrono = { workspace = true }
 stringzilla = { workspace = true }
-simd-json = { workspace = true }
 once_cell = { workspace = true }
 result = { path = "../result" }

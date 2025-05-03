@@ -7,11 +7,7 @@ edition = { workspace = true }
 salvo = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }
-mimalloc = { workspace = true, features = [
-  "local_dynamic_tls",
-  "no_thp",
-  "override",
-] }
+mimalloc = { workspace = true}
 result = { version = "0.1.0", path = "../result" }
 jwt_utils = { version = "0.1.0", path = "../jwt_utils" }
 redisync = { version = "0.1.0", path = "../redisync" }

@@ -3,7 +3,7 @@ use crate::{
         redis::redis_write_and_rm,
         write_response::{render_error, render_success},
     },
-    jwt::{jwt_utils::JWT_UTILS, models::Claims},
+    jwt::{jwt_utils::get_jwt_utils, models::Claims},
 };
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
@@ -20,7 +20,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {
         let role = "admin";
-        let (token, exp_time) = JWT_UTILS.generate_token(role, login_req.username);
+        let (token, exp_time) = get_jwt_utils().generate_token(role, login_req.username);
         let Ok(token) = token else {
             res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
             return render_error(res, "Server has some error.");

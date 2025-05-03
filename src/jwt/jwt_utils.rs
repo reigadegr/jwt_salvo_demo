@@ -18,6 +18,10 @@ pub static JWT_UTILS: Lazy<SecretKey> = Lazy::new(|| {
     SecretKey::new(encode_key, decode_key, jwt_header, jwt_vation)
 });
 
+pub fn get_jwt_utils() -> &'static SecretKey {
+    &JWT_UTILS
+}
+
 pub struct SecretKey {
     encode_key: EncodingKey,
     decode_key: DecodingKey,

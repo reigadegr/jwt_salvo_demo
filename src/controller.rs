@@ -1,7 +1,7 @@
 use crate::{
     config::{
         redis::redis_write_and_rm,
-        write_response::{render_error, render_success},
+        result::{render_error, render_success},
     },
     jwt::{jwt_utils::get_jwt_utils, models::Claims},
 };

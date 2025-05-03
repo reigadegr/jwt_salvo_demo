@@ -1,7 +1,5 @@
-use crate::{
-    config::{redis::redis_read, write_response::render_error},
-    jwt::jwt_utils::get_jwt_utils,
-};
+use super::jwt_utils::get_jwt_utils;
+use crate::config::{redis::redis_read, result::render_error};
 use salvo::{http::StatusCode, prelude::*};
 use stringzilla::sz;
 

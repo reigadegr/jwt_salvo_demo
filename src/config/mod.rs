@@ -1,7 +1,6 @@
 pub mod redis;
 pub mod result;
 pub mod router;
-pub mod write_response;
 
 use crate::rbac::casbin::init_model;
 use redis::init_redis_pool;

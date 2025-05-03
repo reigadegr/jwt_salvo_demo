@@ -1,4 +1,6 @@
+use salvo::prelude::{Json, Response};
 use serde::Serialize;
+use simd_json::json;
 
 // 定义响应数据结构体
 #[derive(Serialize, Debug)]
@@ -31,4 +33,17 @@ impl<'a, T> ResData<'a, T> {
             data: None,
         }
     }
+}
+
+pub fn render_success<T>(res: &mut Response, data: T, msg: &str)
+where
+    T: serde::Serialize,
+{
+    let data = ResData::success(&data, msg);
+    res.render(Json(json!(data)));
+}
+
+pub fn render_error(res: &mut Response, msg: &str) {
+    let data: ResData<()> = ResData::error(msg);
+    res.render(Json(json!(data)));
 }

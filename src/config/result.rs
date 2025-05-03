@@ -1,11 +1,11 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 // 定义响应数据结构体
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 pub struct ResData<'a, T> {
     pub code: i8,
     pub msg: &'a str,
-    pub data: Option<T>,
+    pub data: Option<&'a T>,
 }
 
 // 定义统一响应代码
@@ -14,7 +14,7 @@ const ERROR_CODE: i8 = -1;
 
 // 统一响应结构体的实现
 impl<'a, T> ResData<'a, T> {
-    pub const fn success(data: T, message: &'a str) -> Self {
+    pub const fn success(data: &'a T, message: &'a str) -> Self {
         ResData {
             code: SUCCESS_CODE,
             msg: message,

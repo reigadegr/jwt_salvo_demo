@@ -6,7 +6,7 @@ pub fn render_success<T>(res: &mut Response, data: T, msg: &str)
 where
     T: serde::Serialize,
 {
-    let data = ResData::success(data, msg);
+    let data = ResData::success(&data, msg);
     res.render(Json(json!(data)));
 }
 

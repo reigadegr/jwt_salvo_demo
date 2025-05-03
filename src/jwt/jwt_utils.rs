@@ -8,24 +8,24 @@ use once_cell::sync::Lazy;
 const PRIVATE_KEY: &[u8] = include_bytes!("../../keys/private_key.pem");
 const PUBLIC_KEY: &[u8] = include_bytes!("../../keys/public_key.pem");
 
-pub static JWT_UTILS: Lazy<SecertKey> = Lazy::new(|| {
+pub static JWT_UTILS: Lazy<SecretKey> = Lazy::new(|| {
     let encode_key = EncodingKey::from_ed_pem(PRIVATE_KEY).unwrap();
     let decode_key = DecodingKey::from_ed_pem(PUBLIC_KEY).unwrap();
     let jwt_header = Header::new(Algorithm::EdDSA);
     let mut jwt_vation = Validation::new(Algorithm::EdDSA);
     jwt_vation.leeway = 0;
 
-    SecertKey::new(encode_key, decode_key, jwt_header, jwt_vation)
+    SecretKey::new(encode_key, decode_key, jwt_header, jwt_vation)
 });
 
-pub struct SecertKey {
+pub struct SecretKey {
     encode_key: EncodingKey,
     decode_key: DecodingKey,
     jwt_header: Header,
     jwt_vation: Validation,
 }
 
-impl SecertKey {
+impl SecretKey {
     pub const fn new(
         encode_key: EncodingKey,
         decode_key: DecodingKey,

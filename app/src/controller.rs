@@ -1,10 +1,6 @@
-use crate::{
-    config::{
-        redis::redis_write_and_rm,
-        result::{render_error, render_success},
-    },
-    jwt::{jwt_utils::get_jwt_utils, models::Claims},
-};
+use jwt_utils::{get_jwt_utils, models::Claims};
+use redisync::redis_write_and_rm;
+use result::{render_error, render_success};
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
 

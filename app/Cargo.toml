@@ -27,3 +27,7 @@ mimalloc = { workspace = true, features = [
   "no_thp",
   "override",
 ] }
+result = { version = "0.1.0", path = "../result" }
+jwt_utils = { version = "0.1.0", path = "../jwt_utils" }
+redisync = { version = "0.1.0", path = "../redisync" }
+rbac = { version = "0.1.0", path = "../rbac" }

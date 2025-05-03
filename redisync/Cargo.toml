@@ -1,0 +1,11 @@
+[package]
+name = "redisync"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+tokio = { workspace = true }
+anyhow = { workspace = true }
+redis = { workspace = true, features = ["tokio-comp"] }
+bb8-redis = { workspace = true }
+bb8 = { workspace = true }

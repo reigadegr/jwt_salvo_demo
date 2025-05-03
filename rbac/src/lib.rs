@@ -1,6 +1,6 @@
-use crate::jwt::models::Claims;
 use anyhow::Result;
 use casbin::{CoreApi, DefaultModel, Enforcer, StringAdapter};
+use jwt_utils::models::Claims;
 use salvo::{
     http::StatusError,
     {Depot, Request},
@@ -8,8 +8,8 @@ use salvo::{
 use salvo_casbin::{CasbinHoop, CasbinVals};
 use tokio::sync::OnceCell;
 
-const POLICY: &str = include_str!("../../casbin/rbac_with_pattern_policy.csv");
-const MODEL_CFG: &str = include_str!("../../casbin/rbac_with_pattern_model.conf");
+const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
+const MODEL_CFG: &str = include_str!("../casbin/rbac_with_pattern_model.conf");
 static MODEL: OnceCell<DefaultModel> = OnceCell::const_new();
 
 pub async fn init_model() {

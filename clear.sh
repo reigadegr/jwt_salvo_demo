@@ -1,5 +1,5 @@
 set -x
-rm $(find ./*/src -name "*.bak")
+rm $(find ./ -name "*.bak")
 rm $(dirname "$0")/*.bak $(dirname "$0")/.*.bak module/*.bak
 
 rm $(find ./*/src -name "jwt_salvo_demo")

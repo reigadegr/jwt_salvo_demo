@@ -1,0 +1,9 @@
+[package]
+name = "result"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+salvo = { workspace = true }
+serde = { workspace = true }
+simd-json = { workspace = true }

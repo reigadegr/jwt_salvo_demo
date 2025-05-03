@@ -1,0 +1,12 @@
+[package]
+name = "rbac"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+salvo = { workspace = true }
+tokio = { workspace = true }
+salvo-casbin = { workspace = true }
+anyhow = { workspace = true }
+casbin = { workspace = true }
+jwt_utils = { version = "0.1.0", path = "../jwt_utils" }

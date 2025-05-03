@@ -1,0 +1,15 @@
+[package]
+name = "jwt_utils"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+redisync = { path = "../redisync" }
+salvo = { workspace = true }
+jsonwebtoken = { workspace = true }
+serde = { workspace = true }
+chrono = { workspace = true }
+stringzilla = { workspace = true }
+simd-json = { workspace = true }
+once_cell = { workspace = true }
+result = { path = "../result" }

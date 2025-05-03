@@ -12,8 +12,7 @@ static ENCODE_KEY: Lazy<EncodingKey> = Lazy::new(|| EncodingKey::from_ed_pem(PRI
 static DECODE_KEY: Lazy<DecodingKey> = Lazy::new(|| DecodingKey::from_ed_pem(PUBLIC_KEY).unwrap());
 
 pub fn generate_token(role: &str, user_id: &str) -> (Result<String, Error>, i64) {
-    let reset_timestamp = Utc::now() - Duration::seconds(61);
-    let exp_time = reset_timestamp + Duration::seconds(20);
+    let exp_time = Utc::now() + Duration::seconds(20);
     let claims = Claims::new(role, user_id, exp_time);
     (
         encode(&Header::new(Algorithm::EdDSA), &claims, &ENCODE_KEY),
@@ -22,5 +21,7 @@ pub fn generate_token(role: &str, user_id: &str) -> (Result<String, Error>, i64)
 }
 
 pub fn validate_token(token: &str) -> Result<Claims, Error> {
-    decode::<Claims>(token, &DECODE_KEY, &Validation::new(Algorithm::EdDSA)).map(|data| data.claims)
+    let mut v = Validation::new(Algorithm::EdDSA);
+    v.leeway = 0;
+    decode::<Claims>(token, &DECODE_KEY, &v).map(|data| data.claims)
 }

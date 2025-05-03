@@ -1,0 +1,29 @@
+[package]
+name = "jwt_salvo_demo"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+salvo = { workspace = true, features = [
+  "timeout",
+  "concurrency-limiter",
+  "http2-cleartext",
+] }
+jsonwebtoken = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+chrono = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+stringzilla = { workspace = true }
+simd-json = { workspace = true }
+salvo-casbin = { workspace = true }
+anyhow = { workspace = true }
+once_cell = { workspace = true }
+casbin = { workspace = true }
+redis = { workspace = true, features = ["tokio-comp"] }
+bb8-redis = { workspace = true }
+bb8 = { workspace = true }
+mimalloc = { workspace = true, features = [
+  "local_dynamic_tls",
+  "no_thp",
+  "override",
+] }

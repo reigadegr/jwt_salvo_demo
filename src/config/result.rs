@@ -4,7 +4,9 @@ use serde::Serialize;
 #[derive(Serialize, Debug)]
 pub struct ResData<'a, T> {
     pub code: i8,
+    #[serde(borrow)]
     pub msg: &'a str,
+    #[serde(borrow)]
     pub data: Option<&'a T>,
 }
 

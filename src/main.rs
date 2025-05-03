@@ -11,31 +11,12 @@ mod controller;
 mod jwt;
 mod rbac;
 
-use config::redis::init_redis_pool;
-use controller::{login, profile};
-use jwt::middleware::jwt_auth;
-use rbac::casbin::{init_model, manage_casbin_hoop};
-use salvo::prelude::*;
-use std::time::Duration;
+use config::salvo_application_start;
 
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[tokio::main]
 async fn main() {
-    init_model().await;
-    init_redis_pool().await;
-    let router = Router::new()
-        .hoop(max_concurrency(200))
-        .hoop(Timeout::new(Duration::from_secs(5)))
-        .push(Router::with_path("login").post(login))
-        .push(
-            Router::new()
-                .hoop(jwt_auth)
-                .hoop(manage_casbin_hoop().await)
-                .push(Router::with_path("profile").get(profile)),
-        );
-
-    let acceptor = TcpListener::new("0.0.0.0:3000").bind().await;
-    Server::new(acceptor).serve(router).await;
+    salvo_application_start().await;
 }

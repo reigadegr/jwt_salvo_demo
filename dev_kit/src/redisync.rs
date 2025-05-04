@@ -6,14 +6,12 @@ use redis::{AsyncCommands, RedisError, ToRedisArgs};
 use std::time::Duration;
 use tokio::sync::OnceCell;
 
-const REDIS_URI: &str = "redis://127.0.0.1:6379/";
-
 pub static REDIS_POOL: OnceCell<Pool<RedisConnectionManager>> = OnceCell::const_new();
 
 pub async fn init_redis_pool() {
     REDIS_POOL
         .get_or_init(|| async {
-            let manager = RedisConnectionManager::new(REDIS_URI).unwrap();
+            let manager = RedisConnectionManager::new(&*PROFILE.redis_cfg.uri).unwrap();
             let max_lifetime = PROFILE.redis_cfg.max_lifetime.map(Duration::from_secs);
 
             let idle_timeout = PROFILE.redis_cfg.idle_timeout.map(Duration::from_secs);

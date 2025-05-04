@@ -1,14 +1,17 @@
 [package]
-name = "jwt_utils"
+name = "auth"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
-redisync = { path = "../redisync" }
 salvo = { workspace = true }
 jsonwebtoken = { workspace = true }
 serde = { workspace = true }
 chrono = { workspace = true }
 stringzilla = { workspace = true }
 once_cell = { workspace = true }
-result = { path = "../result" }
+dev_kit = { path = "../dev_kit" }
+salvo-casbin = { workspace = true }
+casbin = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }

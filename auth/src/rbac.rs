@@ -1,6 +1,6 @@
+use crate::models::Claims;
 use anyhow::Result;
 use casbin::{CoreApi, DefaultModel, Enforcer, StringAdapter};
-use jwt_utils::models::Claims;
 use salvo::{
     http::StatusError,
     {Depot, Request},

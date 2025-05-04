@@ -1,5 +1,6 @@
 pub mod middleware;
 pub mod models;
+pub mod rbac;
 
 use chrono::{Duration, Utc};
 use jsonwebtoken::{

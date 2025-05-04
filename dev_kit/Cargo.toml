@@ -1,9 +1,12 @@
 [package]
-name = "redisync"
+name = "dev_kit"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
+salvo = { workspace = true }
+serde = { workspace = true }
+simd-json = { workspace = true }
 tokio = { workspace = true }
 anyhow = { workspace = true }
 redis = { workspace = true, features = ["tokio-comp"] }

@@ -1,6 +1,8 @@
-use jwt_utils::{get_jwt_utils, models::Claims};
-use redisync::redis_write_and_rm;
-use result::{render_error, render_success};
+use auth::{get_jwt_utils, models::Claims};
+use dev_kit::{
+    redisync::redis_write_and_rm,
+    result::{render_error, render_success},
+};
 use salvo::{http::StatusCode, prelude::*};
 use serde::Deserialize;
 

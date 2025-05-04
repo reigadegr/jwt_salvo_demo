@@ -8,7 +8,5 @@ salvo = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true }
 mimalloc = { workspace = true }
-result = { version = "0.1.0", path = "../result" }
-jwt_utils = { version = "0.1.0", path = "../jwt_utils" }
-redisync = { version = "0.1.0", path = "../redisync" }
-rbac = { version = "0.1.0", path = "../rbac" }
+dev_kit = { version = "0.1.0", path = "../dev_kit" }
+auth = { version = "0.1.0", path = "../auth" }

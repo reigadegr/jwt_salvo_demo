@@ -10,3 +10,12 @@ password = "admin"
 [client_cfg]
 app_ip = "0.0.0.0"
 app_port = "3000"
+
+[redis_cfg]
+uri = "redis://127.0.0.1:6379/"
+max_size = 50
+min_idle = 10
+max_lifetime = 60
+idle_timeout = 60
+connection_timeout = 5
+test_on_check_out = true

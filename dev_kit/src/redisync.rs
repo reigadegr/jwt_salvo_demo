@@ -1,3 +1,4 @@
+use crate::config::PROFILE;
 use anyhow::{Result, anyhow};
 use bb8::{Pool, PooledConnection, RunError};
 use bb8_redis::RedisConnectionManager;
@@ -13,13 +14,19 @@ pub async fn init_redis_pool() {
     REDIS_POOL
         .get_or_init(|| async {
             let manager = RedisConnectionManager::new(REDIS_URI).unwrap();
+            let max_lifetime = PROFILE.redis_cfg.max_lifetime.map(Duration::from_secs);
+
+            let idle_timeout = PROFILE.redis_cfg.idle_timeout.map(Duration::from_secs);
+
+            let connection_timeout = Duration::from_secs(PROFILE.redis_cfg.connection_timeout);
+
             Pool::builder()
-                .max_size(50)
-                .min_idle(Some(10))
-                .max_lifetime(Some(Duration::from_secs(60)))
-                .idle_timeout(Some(Duration::from_secs(60)))
-                .connection_timeout(Duration::from_secs(5))
-                .test_on_check_out(true)
+                .max_size(PROFILE.redis_cfg.max_size)
+                .min_idle(PROFILE.redis_cfg.min_idle)
+                .max_lifetime(max_lifetime)
+                .idle_timeout(idle_timeout)
+                .connection_timeout(connection_timeout)
+                .test_on_check_out(PROFILE.redis_cfg.test_on_check_out)
                 .build(manager)
                 .await
                 .unwrap()

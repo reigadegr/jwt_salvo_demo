@@ -11,6 +11,7 @@ pub static PROFILE: Lazy<Config> = Lazy::new(|| {
 pub struct Config {
     pub nacos_cfg: NacosCfg,
     pub client_cfg: ClientCfg,
+    pub redis_cfg: RedisCfg,
 }
 
 #[derive(Deserialize, Eq, Hash, PartialEq)]
@@ -28,4 +29,15 @@ pub struct NacosCfg {
 pub struct ClientCfg {
     pub app_ip: String,
     pub app_port: String,
+}
+
+#[derive(Deserialize, Eq, Hash, PartialEq)]
+pub struct RedisCfg {
+    pub uri: String,
+    pub max_size: u32,
+    pub min_idle: Option<u32>,
+    pub max_lifetime: Option<u64>,
+    pub idle_timeout: Option<u64>,
+    pub connection_timeout: u64,
+    pub test_on_check_out: bool,
 }

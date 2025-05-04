@@ -12,15 +12,11 @@ pub struct ResData<'a, T> {
     pub data: Option<&'a T>,
 }
 
-// 定义统一响应代码
-const SUCCESS_CODE: i8 = 0;
-const ERROR_CODE: i8 = -1;
-
 // 统一响应结构体的实现
 impl<'a, T> ResData<'a, T> {
     pub const fn success(data: &'a T, message: &'a str) -> Self {
         ResData {
-            code: SUCCESS_CODE,
+            code: 0,
             msg: message,
             data: Some(data),
         }
@@ -28,7 +24,7 @@ impl<'a, T> ResData<'a, T> {
 
     pub const fn error(message: &'a str) -> Self {
         ResData {
-            code: ERROR_CODE,
+            code: -1,
             msg: message,
             data: None,
         }

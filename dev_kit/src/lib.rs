@@ -1,5 +1,6 @@
 pub mod middleware;
 pub mod models;
+pub mod nacos;
 pub mod rbac;
 pub mod redisync;
 pub mod result;

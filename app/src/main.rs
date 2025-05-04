@@ -9,7 +9,7 @@
 mod controller;
 mod router;
 
-use dev_kit::{rbac::init_model, redisync::init_redis_pool};
+use dev_kit::{nacos::init_nacos_service, rbac::init_model, redisync::init_redis_pool};
 use router::init_router;
 use salvo::prelude::*;
 
@@ -29,5 +29,6 @@ async fn use_http1(router: Router) {
 pub async fn salvo_application_start() {
     init_model().await;
     init_redis_pool().await;
+    init_nacos_service().await;
     use_http1(init_router().await).await;
 }

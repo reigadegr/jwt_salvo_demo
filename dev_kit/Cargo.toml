@@ -4,17 +4,18 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-salvo = { workspace = true }
-jsonwebtoken = { workspace = true }
-serde = { workspace = true }
-chrono = { workspace = true }
-stringzilla = { workspace = true }
-once_cell = { workspace = true }
-salvo-casbin = { workspace = true }
-casbin = { workspace = true }
-anyhow = { workspace = true }
-tokio = { workspace = true }
-simd-json = { workspace = true }
-redis = { workspace = true }
-bb8-redis = { workspace = true }
-bb8 = { workspace = true }
+salvo.workspace = true
+jsonwebtoken.workspace = true
+serde.workspace = true
+chrono.workspace = true
+stringzilla.workspace = true
+once_cell.workspace = true
+salvo-casbin.workspace = true
+casbin.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+simd-json.workspace = true
+redis.workspace = true
+bb8-redis.workspace = true
+bb8.workspace = true
+nacos-sdk.workspace = true

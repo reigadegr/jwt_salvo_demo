@@ -1,11 +1,12 @@
 [package]
 name = "jwt_salvo_demo"
-version = { workspace = true }
-edition = { workspace = true }
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
-salvo = { workspace = true }
-serde = { workspace = true }
-tokio = { workspace = true }
-mimalloc = { workspace = true }
+salvo.workspace = true
+serde.workspace = true
+tokio.workspace = true
+mimalloc.workspace = true
 dev_kit = { version = "0.1.0", path = "../dev_kit" }
+nacos-sdk.workspace = true

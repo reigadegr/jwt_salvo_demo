@@ -1,3 +1,5 @@
 #!//bin/sh
-echo "rs代码行数: "
-find $(dirname "$0")/src -name "*.rs" -exec cat {} \; | wc -l
+for i in $(grep "members" Cargo.toml | awk -F '[][]' '{print $2}' | sed 's/,//g' | sed 's/"//g'); do
+    echo "$i crate代码行数: "
+    find $(dirname "$0")/$i  -name "*.rs" -exec cat {} \; | wc -l
+done

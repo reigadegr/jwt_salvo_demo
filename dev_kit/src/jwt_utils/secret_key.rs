@@ -5,8 +5,8 @@ use jsonwebtoken::{
 };
 use once_cell::sync::Lazy;
 
-const PRIVATE_KEY: &[u8] = include_bytes!("../keys/private_key.pem");
-const PUBLIC_KEY: &[u8] = include_bytes!("../keys/public_key.pem");
+const PRIVATE_KEY: &[u8] = include_bytes!("../../keys/private_key.pem");
+const PUBLIC_KEY: &[u8] = include_bytes!("../../keys/public_key.pem");
 
 static JWT_UTILS: Lazy<SecretKey> = Lazy::new(|| {
     let encode_key = EncodingKey::from_ed_pem(PRIVATE_KEY).unwrap();

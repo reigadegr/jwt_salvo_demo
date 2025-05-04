@@ -1,4 +1,4 @@
-use salvo::prelude::{Json, Response};
+use salvo::{http::StatusCode, prelude::*};
 use serde::Serialize;
 use simd_json::json;
 
@@ -39,7 +39,8 @@ where
     res.render(Json(json!(data)));
 }
 
-pub fn render_error(res: &mut Response, msg: &str) {
+pub fn render_error(res: &mut Response, msg: &str, status_code: StatusCode) {
+    res.status_code(status_code);
     let data: ResData<()> = ResData::error(msg);
     res.render(Json(json!(data)));
 }

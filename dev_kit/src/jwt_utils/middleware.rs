@@ -1,12 +1,11 @@
-use super::{jwt::get_jwt_utils, redisync::redis_read, result::render_error};
+use crate::{jwt_utils::secret_key::get_jwt_utils, redisync::redis_read, result::render_error};
 use salvo::{http::StatusCode, prelude::*};
 use stringzilla::sz;
 
 #[handler]
 pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) {
     let Some(token) = req.header("Authorization") else {
-        res.status_code(StatusCode::UNAUTHORIZED);
-        return render_error(res, "No token provided");
+        return render_error(res, "No token provided", StatusCode::UNAUTHORIZED);
     };
 
     let token: &str = token;
@@ -22,17 +21,19 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
             }
             Ok(_) => {
                 // Token存在但不匹配，返回401 Unauthorized
-                res.status_code(StatusCode::UNAUTHORIZED);
-                render_error(res, "Token has expired.");
+                render_error(res, "Token has expired.", StatusCode::UNAUTHORIZED);
             }
             Err(_) => {
                 // Redis操作失败，返回500 InternalServerError
-                res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
-                render_error(res, "Server internal error");
+
+                render_error(
+                    res,
+                    "Server internal error",
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                );
             }
         }
     } else {
-        res.status_code(StatusCode::FORBIDDEN);
-        render_error(res, "Invalid token");
+        render_error(res, "Invalid token", StatusCode::FORBIDDEN);
     }
 }

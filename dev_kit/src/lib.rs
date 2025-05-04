@@ -1,6 +1,5 @@
 pub mod config;
-pub mod jwt;
-pub mod middleware;
+pub mod jwt_utils;
 pub mod models;
 pub mod nacos;
 pub mod rbac;

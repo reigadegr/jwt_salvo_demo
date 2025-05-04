@@ -19,3 +19,4 @@ redis.workspace = true
 bb8-redis.workspace = true
 bb8.workspace = true
 nacos-sdk.workspace = true
+toml.workspace = true

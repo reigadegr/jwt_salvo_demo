@@ -1,3 +1,4 @@
+use crate::config::PROFILE;
 use nacos_sdk::api::{
     naming::{
         NamingChangeEvent, NamingEventListener, NamingService, NamingServiceBuilder,
@@ -7,7 +8,7 @@ use nacos_sdk::api::{
 };
 use std::sync::{Arc, LazyLock};
 
-const SERVER_ADDR: &str = "127.0.0.1";
+// static SERVER_ADDR: &str = &PROFILE.nacos_cfg.server_addr;
 const APPLICATION_NAME: &str = "jwt-salvo-service";
 const APPLICATION_IP_ADDR: &str = "127.0.0.1";
 const APPLICATION_PORT: i32 = 3000;
@@ -24,7 +25,7 @@ impl NamingEventListener for MyNamingEventListener {
 
 static CLIENT_PROPS: LazyLock<ClientProps> = LazyLock::new(|| {
     ClientProps::new()
-        .server_addr(SERVER_ADDR)
+        .server_addr(&PROFILE.nacos_cfg.server_addr)
         .auth_username(USERNAME)
         .auth_password(PASSWORD)
 });

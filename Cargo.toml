@@ -1,5 +1,5 @@
 [workspace]
-members = ["app", "auth", "dev_kit"]
+members = ["app", "dev_kit"]
 resolver = "3"
 
 [workspace.package]

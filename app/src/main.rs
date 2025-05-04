@@ -9,8 +9,7 @@
 mod controller;
 mod router;
 
-use auth::rbac::init_model;
-use dev_kit::redisync::init_redis_pool;
+use dev_kit::{rbac::init_model, redisync::init_redis_pool};
 use router::init_router;
 use salvo::prelude::*;
 

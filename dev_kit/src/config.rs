@@ -1,16 +1,16 @@
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 
-const APP_CONFIG: &str = include_str!("../application.toml");
-
 pub static PROFILE: Lazy<Config> = Lazy::new(|| {
-    let profile: Config = toml::from_str(APP_CONFIG).unwrap();
+    let app_config = include_str!("../application.toml");
+    let profile: Config = toml::from_str(app_config).unwrap();
     profile
 });
 
 #[derive(Deserialize)]
 pub struct Config {
     pub nacos_cfg: NacosCfg,
+    pub client_cfg: ClientCfg,
 }
 
 #[derive(Deserialize, Eq, Hash, PartialEq)]
@@ -22,4 +22,10 @@ pub struct NacosCfg {
     pub default_group: String,
     pub username: String,
     pub password: String,
+}
+
+#[derive(Deserialize, Eq, Hash, PartialEq)]
+pub struct ClientCfg {
+    pub app_ip: String,
+    pub app_port: String,
 }

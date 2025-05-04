@@ -7,13 +7,18 @@ pub mod rbac;
 pub mod redisync;
 pub mod result;
 
+use crate::config::PROFILE;
 use nacos::init_nacos_service;
 use rbac::init_model;
 use redisync::init_redis_pool;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 
 async fn use_http1() -> TcpAcceptor {
-    TcpListener::new("0.0.0.0:3000").bind().await
+    let ip = &PROFILE.client_cfg.app_ip;
+    let port = &PROFILE.client_cfg.app_port;
+    let server_args = format!("{ip}:{port}");
+
+    TcpListener::new(server_args).bind().await
 }
 
 pub async fn application_init() -> TcpAcceptor {

@@ -1,8 +1,12 @@
 [nacos_cfg]
-server_ip="127.0.0.1"
-app_name="jwt-salvo-service"
-app_ip="127.0.0.1"
-app_port=3000
-default_group="DEFAULT_GROUP"
-username="admin"
-password="admin"
+server_ip = "127.0.0.1"
+app_name = "jwt-salvo-service"
+app_ip = "127.0.0.1"
+app_port = 3000
+default_group = "DEFAULT_GROUP"
+username = "admin"
+password = "admin"
+
+[client_cfg]
+app_ip = "0.0.0.0"
+app_port = "3000"

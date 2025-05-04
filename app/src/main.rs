@@ -9,7 +9,7 @@
 mod controller;
 mod router;
 
-use dev_kit::{nacos::init_nacos_service, rbac::init_model, redisync::init_redis_pool};
+use dev_kit::application_init;
 use router::init_router;
 use salvo::prelude::*;
 
@@ -18,17 +18,7 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[tokio::main]
 async fn main() {
-    salvo_application_start().await;
-}
-
-async fn use_http1(router: Router) {
-    let acceptor = TcpListener::new("0.0.0.0:3000").bind().await;
+    let acceptor = application_init().await;
+    let router = init_router().await;
     Server::new(acceptor).serve(router).await;
-}
-
-pub async fn salvo_application_start() {
-    init_model().await;
-    init_redis_pool().await;
-    init_nacos_service().await;
-    use_http1(init_router().await).await;
 }

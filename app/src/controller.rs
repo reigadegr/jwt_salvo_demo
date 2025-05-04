@@ -43,3 +43,8 @@ pub async fn profile(res: &mut Response, depot: &mut Depot) {
         Err(_) => render_error(res, "Can not get now user."),
     }
 }
+
+#[handler]
+pub async fn hello(res: &mut Response) {
+    render_success(res, "Hello World", "OK");
+}

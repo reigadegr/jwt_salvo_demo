@@ -15,5 +15,11 @@ pub struct Config {
 
 #[derive(Deserialize, Eq, Hash, PartialEq)]
 pub struct NacosCfg {
-    pub server_addr: String,
+    pub server_ip: String,
+    pub app_name: String,
+    pub app_ip: String,
+    pub app_port: i32,
+    pub default_group: String,
+    pub username: String,
+    pub password: String,
 }

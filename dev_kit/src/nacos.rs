@@ -8,13 +8,6 @@ use nacos_sdk::api::{
 };
 use std::sync::{Arc, LazyLock};
 
-// static SERVER_ADDR: &str = &PROFILE.nacos_cfg.server_addr;
-const APPLICATION_NAME: &str = "jwt-salvo-service";
-const APPLICATION_IP_ADDR: &str = "127.0.0.1";
-const APPLICATION_PORT: i32 = 3000;
-const DEFAULT_GROUP: &str = "DEFAULT_GROUP";
-const USERNAME: &str = "admin";
-const PASSWORD: &str = "admin";
 pub struct MyNamingEventListener;
 
 impl NamingEventListener for MyNamingEventListener {
@@ -25,9 +18,9 @@ impl NamingEventListener for MyNamingEventListener {
 
 static CLIENT_PROPS: LazyLock<ClientProps> = LazyLock::new(|| {
     ClientProps::new()
-        .server_addr(&PROFILE.nacos_cfg.server_addr)
-        .auth_username(USERNAME)
-        .auth_password(PASSWORD)
+        .server_addr(&PROFILE.nacos_cfg.server_ip)
+        .auth_username(&PROFILE.nacos_cfg.username)
+        .auth_password(&PROFILE.nacos_cfg.password)
 });
 
 static NAMING_SERVICE: LazyLock<Box<NamingService>> = LazyLock::new(|| {
@@ -42,23 +35,23 @@ pub async fn init_nacos_service() {
     let listener = Arc::new(MyNamingEventListener);
     let _subscribe_ret = NAMING_SERVICE
         .subscribe(
-            APPLICATION_NAME.to_string(),
-            Some(DEFAULT_GROUP.to_string()),
+            PROFILE.nacos_cfg.app_name.clone(),
+            Some(PROFILE.nacos_cfg.default_group.clone()),
             Vec::default(),
             listener,
         )
         .await;
 
     let service_instance1 = ServiceInstance {
-        ip: APPLICATION_IP_ADDR.to_string(),
-        port: APPLICATION_PORT,
+        ip: PROFILE.nacos_cfg.app_ip.clone(),
+        port: PROFILE.nacos_cfg.app_port,
         ..Default::default()
     };
 
     let _register_instance_ret = NAMING_SERVICE
         .batch_register_instance(
-            APPLICATION_NAME.to_string(),
-            Some(DEFAULT_GROUP.to_string()),
+            PROFILE.nacos_cfg.app_name.clone(),
+            Some(PROFILE.nacos_cfg.default_group.clone()),
             vec![service_instance1],
         )
         .await;

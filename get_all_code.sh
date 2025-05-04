@@ -4,7 +4,7 @@ if [ ! -d target ]; then
     chown -R $uid:$uid ./tatget
     chmod -R 0755 ./target
 fi
-name=$(cat Cargo.toml | grep "name = " | cut -d ' ' -f3 | sed 's/"//g')
+name=$(basename $(dirname "$0"))
 {
     for i in Cargo.toml; do
         echo -e "---以下为项目的$i---\n"
@@ -12,9 +12,11 @@ name=$(cat Cargo.toml | grep "name = " | cut -d ' ' -f3 | sed 's/"//g')
         echo "------------------------"
     done
     
-    for i in $(find ./src -name "*.rs"); do
-        echo "这是$i: "
-        cat $i
-        echo "\n--------------\n"
+    for i in $(grep "members" Cargo.toml | awk -F '[][]' '{print $2}' | sed 's/,//g' | sed 's/"//g'); do
+        for i in $(find $i/src -name "*.rs"); do
+            echo "这是$i: "
+            cat $i
+            echo "\n--------------\n"
+        done
     done
 } > target/"$name"_all_code.txt

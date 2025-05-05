@@ -9,7 +9,7 @@
 mod controller;
 mod router;
 
-use dev_kit::application_init;
+use dev_kit::{application_init, config::init_config};
 use router::init_router;
 use salvo::prelude::*;
 
@@ -18,6 +18,7 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[tokio::main]
 async fn main() {
+    init_config(include_str!("../application.toml"));
     let acceptor = application_init().await;
     let router = init_router().await;
     Server::new(acceptor).serve(router).await;

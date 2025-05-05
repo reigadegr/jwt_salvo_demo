@@ -1,4 +1,4 @@
-use crate::config::PROFILE;
+use crate::config::get_cfg;
 use nacos_sdk::api::{
     naming::{
         NamingChangeEvent, NamingEventListener, NamingService, NamingServiceBuilder,
@@ -18,9 +18,9 @@ impl NamingEventListener for MyNamingEventListener {
 
 static CLIENT_PROPS: LazyLock<ClientProps> = LazyLock::new(|| {
     ClientProps::new()
-        .server_addr(&PROFILE.nacos_cfg.server_ip)
-        .auth_username(&PROFILE.nacos_cfg.username)
-        .auth_password(&PROFILE.nacos_cfg.password)
+        .server_addr(&get_cfg().nacos_cfg.server_ip)
+        .auth_username(&get_cfg().nacos_cfg.username)
+        .auth_password(&get_cfg().nacos_cfg.password)
 });
 
 static NAMING_SERVICE: LazyLock<Box<NamingService>> = LazyLock::new(|| {
@@ -35,23 +35,23 @@ pub async fn init_nacos_service() {
     let listener = Arc::new(MyNamingEventListener);
     let _subscribe_ret = NAMING_SERVICE
         .subscribe(
-            PROFILE.nacos_cfg.app_name.clone(),
-            Some(PROFILE.nacos_cfg.default_group.clone()),
+            get_cfg().nacos_cfg.app_name.clone(),
+            Some(get_cfg().nacos_cfg.default_group.clone()),
             Vec::default(),
             listener,
         )
         .await;
 
     let service_instance1 = ServiceInstance {
-        ip: PROFILE.nacos_cfg.app_ip.clone(),
-        port: PROFILE.nacos_cfg.app_port,
+        ip: get_cfg().nacos_cfg.app_ip.clone(),
+        port: get_cfg().nacos_cfg.app_port,
         ..Default::default()
     };
 
     let _register_instance_ret = NAMING_SERVICE
         .batch_register_instance(
-            PROFILE.nacos_cfg.app_name.clone(),
-            Some(PROFILE.nacos_cfg.default_group.clone()),
+            get_cfg().nacos_cfg.app_name.clone(),
+            Some(get_cfg().nacos_cfg.default_group.clone()),
             vec![service_instance1],
         )
         .await;

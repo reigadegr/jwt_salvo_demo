@@ -1,4 +1,4 @@
-use crate::config::PROFILE;
+use crate::config::get_cfg;
 use anyhow::{Result, anyhow};
 use bb8::{Pool, PooledConnection, RunError};
 use bb8_redis::RedisConnectionManager;
@@ -11,20 +11,20 @@ pub static REDIS_POOL: OnceCell<Pool<RedisConnectionManager>> = OnceCell::const_
 pub async fn init_redis_pool() {
     REDIS_POOL
         .get_or_init(|| async {
-            let manager = RedisConnectionManager::new(&*PROFILE.redis_cfg.uri).unwrap();
-            let max_lifetime = PROFILE.redis_cfg.max_lifetime.map(Duration::from_secs);
+            let manager = RedisConnectionManager::new(&*get_cfg().redis_cfg.uri).unwrap();
+            let max_lifetime = get_cfg().redis_cfg.max_lifetime.map(Duration::from_secs);
 
-            let idle_timeout = PROFILE.redis_cfg.idle_timeout.map(Duration::from_secs);
+            let idle_timeout = get_cfg().redis_cfg.idle_timeout.map(Duration::from_secs);
 
-            let connection_timeout = Duration::from_secs(PROFILE.redis_cfg.connection_timeout);
+            let connection_timeout = Duration::from_secs(get_cfg().redis_cfg.connection_timeout);
 
             Pool::builder()
-                .max_size(PROFILE.redis_cfg.max_size)
-                .min_idle(PROFILE.redis_cfg.min_idle)
+                .max_size(get_cfg().redis_cfg.max_size)
+                .min_idle(get_cfg().redis_cfg.min_idle)
                 .max_lifetime(max_lifetime)
                 .idle_timeout(idle_timeout)
                 .connection_timeout(connection_timeout)
-                .test_on_check_out(PROFILE.redis_cfg.test_on_check_out)
+                .test_on_check_out(get_cfg().redis_cfg.test_on_check_out)
                 .build(manager)
                 .await
                 .unwrap()

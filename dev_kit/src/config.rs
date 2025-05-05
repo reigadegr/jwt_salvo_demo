@@ -1,11 +1,20 @@
-use once_cell::sync::Lazy;
+use anyhow::anyhow;
+use once_cell::sync::OnceCell;
 use serde::Deserialize;
 
-pub static PROFILE: Lazy<Config> = Lazy::new(|| {
-    let app_config = include_str!("../application.toml");
+static PROFILE: OnceCell<Config> = OnceCell::new();
+
+pub fn init_config(app_config: &str) {
     let profile: Config = toml::from_str(app_config).unwrap();
-    profile
-});
+    PROFILE2
+        .set(profile)
+        .map_err(|_| anyhow!("Failed to set configuration."))
+        .unwrap();
+}
+
+pub fn get_cfg() -> &'static Config {
+    PROFILE.get().unwrap()
+}
 
 #[derive(Deserialize)]
 pub struct Config {

@@ -6,7 +6,7 @@ static PROFILE: OnceCell<Config> = OnceCell::new();
 
 pub fn init_config(app_config: &str) {
     let profile: Config = toml::from_str(app_config).unwrap();
-    PROFILE2
+    PROFILE
         .set(profile)
         .map_err(|_| anyhow!("Failed to set configuration."))
         .unwrap();

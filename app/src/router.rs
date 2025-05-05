@@ -1,6 +1,5 @@
 use crate::controller::{hello, login, profile};
-use dev_kit::jwt_utils::middleware::jwt_auth;
-use dev_kit::rbac::manage_casbin_hoop;
+use dev_kit::{jwt_utils::middleware::jwt_auth, rbac::manage_casbin_hoop};
 use salvo::{Router, prelude::*};
 use std::time::Duration;
 

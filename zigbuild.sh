@@ -18,10 +18,11 @@ export RUSTFLAGS="-C default-linker-libraries \
 -C llvm-args=-enable-gvn-hoist \
 -C llvm-args=-enable-loop-versioning-licm \
 -C link-args=-Wl,-O3,--gc-sections,--as-needed \
--C link-args=-Wl,--icf=all,-z,norelro,--pack-dyn-relocs=android+relr,-x,-s,--strip-all,-z,now
+-C link-args=-Wl,-z,norelro,-x,-s,--strip-all,-z,now
 " 
 
 if [ "$1" = "release" ] || [ "$1" = "r" ]; then
+    export CFLAGS="-Wno-error=date-time"
     cargo-zigbuild +nightly zigbuild --target aarch64-unknown-linux-musl -Z trim-paths --verbose -r -Z build-std --
 else
     cargo-zigbuild +nightly zigbuild --target aarch64-unknown-linux-musl -Z trim-paths --verbose --

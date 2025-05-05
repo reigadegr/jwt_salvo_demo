@@ -1,5 +1,4 @@
 use crate::models::Claims;
-use anyhow::Result;
 use casbin::{CoreApi, DefaultModel, Enforcer, StringAdapter};
 use salvo::{
     http::StatusError,

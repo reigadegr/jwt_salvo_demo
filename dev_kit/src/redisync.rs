@@ -48,7 +48,7 @@ pub async fn redis_read(key: &str) -> Result<String> {
     Ok(rs)
 }
 
-pub async fn redis_write_and_rm<T>(key: &str, value: T, time: i64) -> Result<()>
+pub async fn redis_set_with_expiry<T>(key: &str, value: T, time: i64) -> Result<()>
 where
     T: ToRedisArgs + Send + Sync,
 {
@@ -58,7 +58,6 @@ where
     Ok(())
 }
 
-#[allow(dead_code)]
 pub async fn redis_write<T>(key: &str, value: T) -> Result<()>
 where
     T: ToRedisArgs + Send + Sync,
@@ -68,7 +67,6 @@ where
     Ok(())
 }
 
-#[allow(dead_code)]
 pub async fn redis_delete(key: &str) -> Result<()> {
     let mut con = get_db_con().await?;
     let _: () = con.del(key).await?;

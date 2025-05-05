@@ -1,7 +1,7 @@
 use dev_kit::{
     jwt_utils::secret_key::get_jwt_utils,
     models::Claims,
-    redisync::redis_write_and_rm,
+    redisync::redis_set_with_expiry,
     result::{render_error, render_success},
 };
 use salvo::{http::StatusCode, prelude::*};
@@ -35,7 +35,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
             );
         };
         // 把token保存到Redis
-        let save_token = redis_write_and_rm(login_req.username, &token, exp_time).await;
+        let save_token = redis_set_with_expiry(login_req.username, &token, exp_time).await;
         if save_token.is_err() {
             return render_error(
                 res,

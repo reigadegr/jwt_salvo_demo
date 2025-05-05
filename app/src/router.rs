@@ -3,8 +3,11 @@ use dev_kit::{jwt_utils::middleware::jwt_auth, rbac::create_casbin_hoop};
 use salvo::{Router, prelude::*};
 use std::time::Duration;
 
+const MODEL: &str = include_str!("../casbin/rbac_with_pattern_model.conf");
+const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
+
 pub async fn init_router() -> Router {
-    let casbin_hoop = create_casbin_hoop().await;
+    let casbin_hoop = create_casbin_hoop(MODEL, POLICY).await;
     Router::new()
         .push(Router::with_path("/").get(hello))
         .hoop(max_concurrency(200))

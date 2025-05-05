@@ -7,16 +7,13 @@ use salvo::{
 };
 use salvo_casbin::{CasbinHoop, CasbinVals};
 
-const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
-const MODEL_CFG: &str = include_str!("../casbin/rbac_with_pattern_model.conf");
-
-pub async fn create_casbin_hoop()
--> CasbinHoop<Enforcer, fn(&mut Request, &mut Depot) -> Result<Option<CasbinVals>, StatusError>> {
-    let m = DefaultModel::from_str(MODEL_CFG).await.unwrap();
-
+pub async fn create_casbin_hoop(
+    model: &str,
+    policy: &str,
+) -> CasbinHoop<Enforcer, fn(&mut Request, &mut Depot) -> Result<Option<CasbinVals>, StatusError>> {
     //定义配置
-    let a = StringAdapter::new(POLICY);
-
+    let m = DefaultModel::from_str(model).await.unwrap();
+    let a = StringAdapter::new(policy);
     let enforcer = Enforcer::new(m, a).await.unwrap();
 
     CasbinHoop::new(enforcer, false, |_req, depot| {

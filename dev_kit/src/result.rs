@@ -22,6 +22,7 @@ impl<'a, T> ResData<'a, T> {
         }
     }
 
+    #[must_use]
     pub const fn error(message: &'a str) -> Self {
         ResData {
             code: -1,

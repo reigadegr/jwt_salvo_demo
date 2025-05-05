@@ -12,6 +12,7 @@ pub struct Claims {
 }
 
 impl Claims {
+    #[must_use]
     pub fn new(role: &str, username: &str, exp: DateTime<Utc>) -> Self {
         Self {
             role: role.to_owned(),

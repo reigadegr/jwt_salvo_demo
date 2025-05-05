@@ -1,3 +1,12 @@
+#![warn(clippy::nursery, clippy::pedantic)]
+#![allow(
+    clippy::non_std_lazy_statics,
+    clippy::similar_names,
+    clippy::missing_safety_doc,
+    clippy::missing_panics_doc,
+    clippy::missing_errors_doc
+)]
+
 pub mod config;
 pub mod jwt_utils;
 pub mod models;

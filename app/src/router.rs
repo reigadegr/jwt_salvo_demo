@@ -1,9 +1,10 @@
 use crate::controller::{hello, login, profile};
-use dev_kit::{jwt_utils::middleware::jwt_auth, rbac::manage_casbin_hoop};
+use dev_kit::{jwt_utils::middleware::jwt_auth, rbac::create_casbin_hoop};
 use salvo::{Router, prelude::*};
 use std::time::Duration;
 
 pub async fn init_router() -> Router {
+    let casbin_hoop = create_casbin_hoop().await;
     Router::new()
         .push(Router::with_path("/").get(hello))
         .hoop(max_concurrency(200))
@@ -12,7 +13,7 @@ pub async fn init_router() -> Router {
         .push(
             Router::new()
                 .hoop(jwt_auth)
-                .hoop(manage_casbin_hoop().await)
+                .hoop(casbin_hoop)
                 .push(Router::with_path("profile").get(profile)),
         )
 }

@@ -17,7 +17,6 @@ pub mod result;
 
 use config::get_cfg;
 use nacos::init_nacos_service;
-use rbac::init_model;
 use redisync::init_redis_pool;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 
@@ -30,7 +29,6 @@ async fn use_http1() -> TcpAcceptor {
 }
 
 pub async fn application_init() -> TcpAcceptor {
-    init_model().await;
     init_redis_pool().await;
     init_nacos_service().await;
     use_http1().await

@@ -6,24 +6,13 @@ use salvo::{
     {Depot, Request},
 };
 use salvo_casbin::{CasbinHoop, CasbinVals};
-use tokio::sync::OnceCell;
 
 const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
 const MODEL_CFG: &str = include_str!("../casbin/rbac_with_pattern_model.conf");
-static MODEL: OnceCell<DefaultModel> = OnceCell::const_new();
 
-pub async fn init_model() {
-    let m = DefaultModel::from_str(MODEL_CFG).await.unwrap();
-    MODEL.get_or_init(|| async { m }).await;
-}
-
-fn get_model() -> &'static DefaultModel {
-    MODEL.get().expect("Model not initialized")
-}
-
-pub async fn manage_casbin_hoop()
+pub async fn create_casbin_hoop()
 -> CasbinHoop<Enforcer, fn(&mut Request, &mut Depot) -> Result<Option<CasbinVals>, StatusError>> {
-    let m = get_model().clone();
+    let m = DefaultModel::from_str(MODEL_CFG).await.unwrap();
 
     //定义配置
     let a = StringAdapter::new(POLICY);

@@ -6,7 +6,8 @@ use nacos_sdk::api::{
     },
     props::ClientProps,
 };
-use std::sync::{Arc, LazyLock};
+use once_cell::sync::Lazy;
+use std::sync::Arc;
 
 pub struct MyNamingEventListener;
 
@@ -16,14 +17,14 @@ impl NamingEventListener for MyNamingEventListener {
     }
 }
 
-static CLIENT_PROPS: LazyLock<ClientProps> = LazyLock::new(|| {
+static CLIENT_PROPS: Lazy<ClientProps> = Lazy::new(|| {
     ClientProps::new()
         .server_addr(&get_cfg().nacos_cfg.server_ip)
         .auth_username(&get_cfg().nacos_cfg.username)
         .auth_password(&get_cfg().nacos_cfg.password)
 });
 
-static NAMING_SERVICE: LazyLock<Box<NamingService>> = LazyLock::new(|| {
+static NAMING_SERVICE: Lazy<Box<NamingService>> = Lazy::new(|| {
     let naming_service = NamingServiceBuilder::new(CLIENT_PROPS.clone())
         .enable_auth_plugin_http()
         .build()

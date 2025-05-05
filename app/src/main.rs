@@ -9,7 +9,7 @@
 mod controller;
 mod router;
 
-use dev_kit::{application_init, config::init_config};
+use dev_kit::{application_init, config::init_config, jwt_utils::secret_key::init_jwt_utils};
 use router::init_router;
 use salvo::prelude::*;
 
@@ -19,6 +19,10 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 #[tokio::main]
 async fn main() {
     init_config(include_str!("../application.toml"));
+    init_jwt_utils(
+        include_bytes!("../keys/private_key.pem"),
+        include_bytes!("../keys/public_key.pem"),
+    );
     let acceptor = application_init().await;
     let router = init_router().await;
     Server::new(acceptor).serve(router).await;

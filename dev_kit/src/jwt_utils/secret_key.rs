@@ -1,26 +1,29 @@
 use crate::models::Claims;
+use anyhow::anyhow;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode, errors::Error,
 };
-use once_cell::sync::Lazy;
+use once_cell::sync::OnceCell;
 
-const PRIVATE_KEY: &[u8] = include_bytes!("../../keys/private_key.pem");
-const PUBLIC_KEY: &[u8] = include_bytes!("../../keys/public_key.pem");
+static JWT_UTILS: OnceCell<SecretKey> = OnceCell::new();
 
-static JWT_UTILS: Lazy<SecretKey> = Lazy::new(|| {
-    let encode_key = EncodingKey::from_ed_pem(PRIVATE_KEY).unwrap();
-    let decode_key = DecodingKey::from_ed_pem(PUBLIC_KEY).unwrap();
+pub fn init_jwt_utils(private_key: &[u8], public_key: &[u8]) {
+    let encode_key = EncodingKey::from_ed_pem(private_key).unwrap();
+    let decode_key = DecodingKey::from_ed_pem(public_key).unwrap();
     let jwt_header = Header::new(Algorithm::EdDSA);
     let mut jwt_vation = Validation::new(Algorithm::EdDSA);
     jwt_vation.leeway = 0;
-
-    SecretKey::new(encode_key, decode_key, jwt_header, jwt_vation)
-});
+    let jwt_utils = SecretKey::new(encode_key, decode_key, jwt_header, jwt_vation);
+    JWT_UTILS
+        .set(jwt_utils)
+        .map_err(|_| anyhow!("Failed to set jwt_utils."))
+        .unwrap();
+}
 
 #[must_use]
 pub fn get_jwt_utils() -> &'static SecretKey {
-    &JWT_UTILS
+    JWT_UTILS.get().unwrap()
 }
 
 pub struct SecretKey {

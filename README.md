@@ -18,4 +18,4 @@ Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.eyJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6
 ```
 
 - 本项目的deepwiki
-https://github.com/reigadegr/jwt_salvo_demo
+https://deepwiki.com/reigadegr/jwt_salvo_demo

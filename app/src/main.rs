@@ -9,7 +9,10 @@
 mod controller;
 mod router;
 
-use dev_kit::{application_init, config::init_config, jwt_utils::secret_key::init_jwt_utils};
+use dev_kit::{
+    application_init, config::init_config, jwt_utils::secret_key::init_jwt_utils,
+    tracing_subscriber,
+};
 use router::init_router;
 use salvo::prelude::*;
 
@@ -18,6 +21,7 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt().init();
     init_config(include_str!("../application.toml"));
     init_jwt_utils(
         include_bytes!("../keys/private_key.pem"),

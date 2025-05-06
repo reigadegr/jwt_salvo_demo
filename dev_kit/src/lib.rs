@@ -19,6 +19,7 @@ use config::get_cfg;
 use nacos::init_nacos_service;
 use redisync::init_redis_pool;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
+pub use tracing_subscriber;
 
 async fn use_http1() -> TcpAcceptor {
     let ip = &get_cfg().client_cfg.app_ip;

@@ -13,7 +13,7 @@ name=$(basename $(dirname "$0"))
     done
     
     for i in $(grep "members" Cargo.toml | awk -F '[][]' '{print $2}' | sed 's/,//g' | sed 's/"//g'); do
-        for i in $(find $i/src -name "*.rs"); do
+        for i in $(find $i/src -name "*.rs") $i/Cargo.toml; do
             echo "这是$i: "
             cat $i
             echo "\n--------------\n"

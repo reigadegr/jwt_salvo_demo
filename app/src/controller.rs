@@ -1,6 +1,5 @@
 use dev_kit::{
-    jwt_utils::secret_key::get_jwt_utils,
-    models::Claims,
+    jwt_utils::{get_claims, secret_key::get_jwt_utils},
     redisync::redis_set_with_expiry,
     result::{render_error, render_success},
 };
@@ -50,7 +49,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
 
 #[handler]
 pub async fn profile(res: &mut Response, depot: &mut Depot) {
-    match depot.get::<Claims>("user") {
+    match get_claims(depot) {
         Ok(user) => render_success(res, user, "成功获取用户信息"),
         Err(_) => render_error(
             res,

@@ -1,3 +1,4 @@
+use crate::jwt_utils::save_claims;
 use crate::{jwt_utils::secret_key::get_jwt_utils, redisync::redis_read, result::render_error};
 use salvo::{http::StatusCode, prelude::*};
 use stringzilla::sz;
@@ -17,7 +18,7 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
     if let Ok(claims) = get_jwt_utils().validate_token(jwt_token) {
         match redis_read(&claims.username).await {
             Ok(redis_token) if redis_token == jwt_token => {
-                depot.insert("user", claims);
+                save_claims(depot, claims);
             }
             Ok(_) => {
                 // Token存在但不匹配，返回401 Unauthorized

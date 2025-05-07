@@ -1,4 +1,4 @@
-use crate::models::Claims;
+use crate::jwt_utils::get_claims;
 use casbin::{CoreApi, DefaultModel, Enforcer, StringAdapter};
 use salvo::{
     http::StatusError,
@@ -16,7 +16,7 @@ pub async fn create_casbin_hoop(
     let enforcer = Enforcer::new(m, a).await.unwrap();
 
     CasbinHoop::new(enforcer, false, |_req, depot| {
-        let Ok(auth) = depot.get::<Claims>("user") else {
+        let Ok(auth) = get_claims(depot) else {
             return Err(StatusError::bad_request());
         };
 

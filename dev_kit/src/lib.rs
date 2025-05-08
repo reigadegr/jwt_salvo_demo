@@ -21,15 +21,16 @@ use redisync::init_redis_pool;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 pub use tracing_subscriber;
 
-async fn use_http1() -> TcpAcceptor {
+async fn use_http1() -> Server<TcpAcceptor> {
     let ip = &get_cfg().client_cfg.app_ip;
     let port = &get_cfg().client_cfg.app_port;
     let server_args = format!("{ip}:{port}");
 
-    TcpListener::new(server_args).bind().await
+    let acceptor = TcpListener::new(server_args).bind().await;
+    Server::new(acceptor)
 }
 
-pub async fn application_init() -> TcpAcceptor {
+pub async fn application_init() -> Server<TcpAcceptor> {
     init_redis_pool().await;
     init_nacos_service().await;
     use_http1().await

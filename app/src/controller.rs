@@ -1,3 +1,4 @@
+use crate::get_handle;
 use dev_kit::{
     jwt_utils::{get_claims, secret_key::get_jwt_utils},
     redisync::redis_set_with_expiry,
@@ -62,4 +63,13 @@ pub async fn profile(res: &mut Response, depot: &mut Depot) {
 #[handler]
 pub async fn hello(res: &mut Response) {
     render_success(res, "Hello World", "OK");
+}
+
+#[handler]
+pub async fn graceful_stop(res: &mut Response) {
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+        get_handle().stop_graceful(None);
+    });
+    render_success(res, "开始停止接收请求", "OK");
 }

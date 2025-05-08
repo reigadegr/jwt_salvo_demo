@@ -49,7 +49,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
 }
 
 #[handler]
-pub async fn profile(res: &mut Response, depot: &mut Depot) {
+pub async fn profile(res: &mut Response, depot: &Depot) {
     match get_claims(depot) {
         Ok(user) => render_success(res, user, "成功获取用户信息"),
         Err(_) => render_error(
@@ -66,9 +66,10 @@ pub async fn hello(res: &mut Response) {
 }
 
 #[handler]
-pub async fn graceful_stop(res: &mut Response) {
+pub async fn graceful_stop(req: &Request, res: &mut Response) {
+    let time = req.param::<u64>("secs").unwrap();
     tokio::spawn(async move {
-        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(time)).await;
         get_handle().stop_graceful(None);
     });
     render_success(res, "开始停止接收请求", "OK");

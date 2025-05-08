@@ -8,13 +8,13 @@
 )]
 
 pub mod config;
+pub mod graceful_stop;
 pub mod jwt_utils;
 pub mod models;
 pub mod nacos;
 pub mod rbac;
 pub mod redisync;
 pub mod result;
-pub mod graceful_stop;
 
 use config::get_cfg;
 use nacos::init_nacos_service;

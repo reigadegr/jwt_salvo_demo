@@ -4,7 +4,6 @@ use salvo::server::ServerHandle;
 
 pub static SERVER_HANDLE: OnceCell<ServerHandle> = OnceCell::new();
 
-
 pub fn init_handle(app_config: ServerHandle) {
     SERVER_HANDLE
         .set(app_config)

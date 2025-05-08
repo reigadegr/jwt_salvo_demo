@@ -9,19 +9,14 @@
 mod controller;
 mod router;
 
-use anyhow::anyhow;
 use dev_kit::{
-    application_init, config::init_config, jwt_utils::secret_key::init_jwt_utils,
-    tracing_subscriber,
+    application_init, config::init_config, graceful_stop::init_handle,
+    jwt_utils::secret_key::init_jwt_utils, tracing_subscriber,
 };
-use once_cell::sync::OnceCell;
 use router::init_router;
-use salvo::server::ServerHandle;
 
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
-
-pub static SERVER_HANDLE: OnceCell<ServerHandle> = OnceCell::new();
 
 #[tokio::main]
 async fn main() {
@@ -36,15 +31,4 @@ async fn main() {
     let server = application_init().await;
     init_handle(server.handle());
     server.serve(router).await;
-}
-
-pub fn init_handle(app_config: ServerHandle) {
-    SERVER_HANDLE
-        .set(app_config)
-        .map_err(|_| anyhow!("Failed to set server handle."))
-        .unwrap();
-}
-
-pub fn get_handle() -> &'static ServerHandle {
-    SERVER_HANDLE.get().unwrap()
 }

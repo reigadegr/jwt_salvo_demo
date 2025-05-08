@@ -14,6 +14,7 @@ pub mod nacos;
 pub mod rbac;
 pub mod redisync;
 pub mod result;
+pub mod graceful_stop;
 
 use config::get_cfg;
 use nacos::init_nacos_service;

@@ -26,6 +26,7 @@ pub struct Config {
 #[derive(Deserialize, Eq, Hash, PartialEq)]
 pub struct NacosCfg {
     pub server_ip: String,
+    pub server_port: u16,
     pub app_name: String,
     pub app_ip: String,
     pub app_port: i32,
@@ -37,7 +38,7 @@ pub struct NacosCfg {
 #[derive(Deserialize, Eq, Hash, PartialEq)]
 pub struct ClientCfg {
     pub app_ip: String,
-    pub app_port: String,
+    pub app_port: u16,
 }
 
 #[derive(Deserialize, Eq, Hash, PartialEq)]

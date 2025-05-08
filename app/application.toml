@@ -1,5 +1,6 @@
 [nacos_cfg]
 server_ip = "127.0.0.1"
+server_port = 8848
 app_name = "jwt-salvo-service"
 app_ip = "127.0.0.1"
 app_port = 3000
@@ -9,7 +10,7 @@ password = "admin"
 
 [client_cfg]
 app_ip = "0.0.0.0"
-app_port = "3000"
+app_port = 3000
 
 [redis_cfg]
 uri = "redis://127.0.0.1:6379/"

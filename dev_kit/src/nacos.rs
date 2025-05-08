@@ -18,8 +18,10 @@ impl NamingEventListener for MyNamingEventListener {
 }
 
 static CLIENT_PROPS: Lazy<ClientProps> = Lazy::new(|| {
+    let server_ip = &get_cfg().nacos_cfg.server_ip;
+    let server_port = &get_cfg().nacos_cfg.server_port;
     ClientProps::new()
-        .server_addr(&get_cfg().nacos_cfg.server_ip)
+        .server_addr(format!("{server_ip}:{server_port}"))
         .auth_username(&get_cfg().nacos_cfg.username)
         .auth_password(&get_cfg().nacos_cfg.password)
 });

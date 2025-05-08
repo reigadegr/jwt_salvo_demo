@@ -26,12 +26,11 @@ static CLIENT_PROPS: Lazy<ClientProps> = Lazy::new(|| {
         .auth_password(&get_cfg().nacos_cfg.password)
 });
 
-static NAMING_SERVICE: Lazy<Box<NamingService>> = Lazy::new(|| {
-    let naming_service = NamingServiceBuilder::new(CLIENT_PROPS.clone())
+static NAMING_SERVICE: Lazy<NamingService> = Lazy::new(|| {
+    NamingServiceBuilder::new(CLIENT_PROPS.clone())
         .enable_auth_plugin_http()
         .build()
-        .unwrap();
-    Box::new(naming_service)
+        .unwrap()
 });
 
 pub async fn init_nacos_service() {

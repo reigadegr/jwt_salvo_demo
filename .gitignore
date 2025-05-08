@@ -1,7 +1,7 @@
 /target
 Cargo.lock
 **/*.bak
-output
+output*
 *txt
 **/*dump.rdb*
 .idea

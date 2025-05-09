@@ -6,7 +6,6 @@ use nacos_sdk::api::{
     },
     props::ClientProps,
 };
-use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tracing::info;
 

@@ -7,7 +7,12 @@ use salvo::{http::StatusCode, prelude::*};
 use stringzilla::sz;
 
 #[handler]
-pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) {
+pub async fn jwt_auth(
+    req: &mut Request,
+    res: &mut Response,
+    depot: &mut Depot,
+    ctrl: &mut FlowCtrl,
+) {
     let Some(token) = req.header("Authorization") else {
         return render_error(res, "No token provided", StatusCode::UNAUTHORIZED);
     };
@@ -25,19 +30,23 @@ pub async fn jwt_auth(req: &mut Request, res: &mut Response, depot: &mut Depot) 
             }
             Ok(_) => {
                 // Token存在但不匹配，返回401 Unauthorized
+                // 场景: 修改密码后旧token被拦截
                 render_error(res, "Token has expired.", StatusCode::UNAUTHORIZED);
+                ctrl.skip_rest();
             }
             Err(_) => {
                 // Redis操作失败，返回500 InternalServerError
-
                 render_error(
                     res,
                     "Server internal error",
                     StatusCode::INTERNAL_SERVER_ERROR,
                 );
+                ctrl.skip_rest();
             }
         }
     } else {
+        // 场景: 传入的token过期或者不合法
         render_error(res, "Invalid token", StatusCode::FORBIDDEN);
+        ctrl.skip_rest();
     }
 }

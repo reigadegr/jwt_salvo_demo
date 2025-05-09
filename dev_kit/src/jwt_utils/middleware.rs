@@ -31,22 +31,22 @@ pub async fn jwt_auth(
             Ok(_) => {
                 // Token存在但不匹配，返回401 Unauthorized
                 // 场景: 修改密码后旧token被拦截
-                render_error(res, "Token has expired.", StatusCode::UNAUTHORIZED);
                 ctrl.skip_rest();
+                render_error(res, "Token has expired.", StatusCode::UNAUTHORIZED);
             }
             Err(_) => {
                 // Redis操作失败，返回500 InternalServerError
+                ctrl.skip_rest();
                 render_error(
                     res,
                     "Server internal error",
                     StatusCode::INTERNAL_SERVER_ERROR,
                 );
-                ctrl.skip_rest();
             }
         }
     } else {
         // 场景: 传入的token过期或者不合法
-        render_error(res, "Invalid token", StatusCode::FORBIDDEN);
         ctrl.skip_rest();
+        render_error(res, "Invalid token", StatusCode::FORBIDDEN);
     }
 }

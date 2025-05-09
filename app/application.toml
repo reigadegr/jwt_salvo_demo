@@ -4,7 +4,10 @@ server_port = 8848
 app_name = "jwt-salvo-service"
 app_ip = "127.0.0.1"
 app_port = 3000
+weight = 1.5
 default_group = "DEFAULT_GROUP"
+namespace = ""
+cluster_name = "DEFAULT"
 username = "admin"
 password = "admin"
 

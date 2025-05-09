@@ -23,14 +23,17 @@ pub struct Config {
     pub redis_cfg: RedisCfg,
 }
 
-#[derive(Deserialize, Eq, Hash, PartialEq)]
+#[derive(Deserialize)]
 pub struct NacosCfg {
     pub server_ip: String,
     pub server_port: u16,
     pub app_name: String,
     pub app_ip: String,
     pub app_port: i32,
+    pub weight: f64,
     pub default_group: String,
+    pub cluster_name: String,
+    pub namespace: String,
     pub username: String,
     pub password: String,
 }

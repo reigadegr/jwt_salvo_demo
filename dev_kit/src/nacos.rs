@@ -18,7 +18,7 @@ impl NamingEventListener for MyNamingEventListener {
     }
 }
 
-static NAMING_SERVICE: Lazy<NamingService> = Lazy::new(|| {
+fn create_naming_service() -> NamingService {
     let server_ip = &get_cfg().nacos_cfg.server_ip;
     let server_port = &get_cfg().nacos_cfg.server_port;
     let client_props = ClientProps::new()
@@ -30,11 +30,12 @@ static NAMING_SERVICE: Lazy<NamingService> = Lazy::new(|| {
         .enable_auth_plugin_http()
         .build()
         .unwrap()
-});
+}
 
 pub async fn init_nacos_service() {
     let listener = Arc::new(MyNamingEventListener);
-    let _subscribe_ret = NAMING_SERVICE
+    let naming_service = create_naming_service();
+    let _subscribe_ret = naming_service
         .subscribe(
             get_cfg().nacos_cfg.app_name.clone(),
             Some(get_cfg().nacos_cfg.default_group.clone()),
@@ -49,7 +50,7 @@ pub async fn init_nacos_service() {
         ..Default::default()
     };
 
-    let _register_instance_ret = NAMING_SERVICE
+    let _register_instance_ret = naming_service
         .batch_register_instance(
             get_cfg().nacos_cfg.app_name.clone(),
             Some(get_cfg().nacos_cfg.default_group.clone()),

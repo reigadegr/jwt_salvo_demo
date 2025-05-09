@@ -1,6 +1,7 @@
 use dev_kit::{
     graceful_stop::get_handle,
     jwt_utils::{get_claims, secret_key::get_jwt_utils},
+    nacos::deregister_instance,
     redisync::redis_set_with_expiry,
     result::{render_error, render_success},
 };
@@ -67,6 +68,7 @@ pub async fn hello(res: &mut Response) {
 
 #[handler]
 pub async fn graceful_stop(req: &Request, res: &mut Response) {
+    deregister_instance().await;
     let time = req.param::<u64>("secs").unwrap();
     tokio::spawn(async move {
         tokio::time::sleep(std::time::Duration::from_secs(time)).await;

@@ -1,6 +1,7 @@
 [nacos_cfg]
 server_ip = "127.0.0.1"
 server_port = 8848
+grpc_port = 9848
 service_name = "jwt-salvo-service"
 service_ip = "127.0.0.1"
 service_port = 3000

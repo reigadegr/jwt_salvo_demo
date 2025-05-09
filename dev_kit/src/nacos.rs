@@ -25,6 +25,7 @@ static NAMING_SERVICE: Lazy<NamingService> = Lazy::new(|| {
         .server_addr(format!("{server_ip}:{server_port}"))
         .namespace(&get_cfg().nacos_cfg.namespace)
         .app_name(&get_cfg().nacos_cfg.service_name)
+        .remote_grpc_port(get_cfg().nacos_cfg.grpc_port)
         .auth_username(&get_cfg().nacos_cfg.username)
         .auth_password(&get_cfg().nacos_cfg.password);
 

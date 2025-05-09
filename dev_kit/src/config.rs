@@ -27,6 +27,7 @@ pub struct Config {
 pub struct NacosCfg {
     pub server_ip: String,
     pub server_port: u16,
+    pub grpc_port: u32,
     pub service_name: String,
     pub service_ip: String,
     pub service_port: i32,

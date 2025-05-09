@@ -43,25 +43,25 @@ pub async fn init_nacos_service() {
     let naming_service = get_naming_service();
     let _subscribe_ret = naming_service
         .subscribe(
-            get_cfg().nacos_cfg.app_name.clone(),
+            get_cfg().nacos_cfg.service_name.clone(),
             Some(get_cfg().nacos_cfg.default_group.clone()),
             Vec::default(),
             listener,
         )
         .await;
 
-    let service_instance1 = ServiceInstance {
-        ip: get_cfg().nacos_cfg.app_ip.clone(),
-        port: get_cfg().nacos_cfg.app_port,
+    let service_instance = ServiceInstance {
+        ip: get_cfg().nacos_cfg.service_ip.clone(),
+        port: get_cfg().nacos_cfg.service_port,
         weight: get_cfg().nacos_cfg.weight,
         ..Default::default()
     };
 
     let _register_instance_ret = naming_service
-        .batch_register_instance(
-            get_cfg().nacos_cfg.app_name.clone(),
+        .register_instance(
+            get_cfg().nacos_cfg.service_name.clone(),
             Some(get_cfg().nacos_cfg.default_group.clone()),
-            vec![service_instance1],
+            service_instance,
         )
         .await;
 }

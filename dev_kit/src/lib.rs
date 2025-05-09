@@ -23,8 +23,8 @@ use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 pub use tracing_subscriber;
 
 async fn use_http1() -> Server<TcpAcceptor> {
-    let ip = &get_cfg().client_cfg.app_ip;
-    let port = &get_cfg().client_cfg.app_port;
+    let ip = &get_cfg().client_cfg.service_ip;
+    let port = &get_cfg().client_cfg.service_port;
     let server_args = format!("{ip}:{port}");
 
     let acceptor = TcpListener::new(server_args).bind().await;

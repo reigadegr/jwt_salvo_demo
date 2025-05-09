@@ -1,8 +1,10 @@
 use crate::config::get_cfg;
 use anyhow::{Result, anyhow};
 use bb8::{Pool, PooledConnection, RunError};
-use bb8_redis::RedisConnectionManager;
-use redis::{AsyncCommands, RedisError, ToRedisArgs};
+use bb8_redis::{
+    RedisConnectionManager,
+    redis::{AsyncCommands, RedisError, ToRedisArgs},
+};
 use std::time::Duration;
 use tokio::sync::OnceCell;
 

@@ -14,7 +14,6 @@ salvo-casbin.workspace = true
 casbin.workspace = true
 anyhow.workspace = true
 tokio.workspace = true
-redis.workspace = true
 bb8-redis.workspace = true
 bb8.workspace = true
 nacos-sdk.workspace = true

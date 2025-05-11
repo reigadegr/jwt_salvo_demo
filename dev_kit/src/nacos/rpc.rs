@@ -21,11 +21,11 @@ async fn get_healthy_instance(
     Ok(instance)
 }
 
-pub async fn forward_request(
+pub async fn forward_request_post(
     req: &mut Request,
-    // instance: ServiceInstance,
+    instance: ServiceInstance,
     path: &str,
-) -> Result<()> {
+) -> Result<String> {
     // 创建一个reqwest客户端
     let client = reqwest::Client::new();
 
@@ -39,13 +39,12 @@ pub async fn forward_request(
     let payload = (req.payload().await).map_or(Cow::Borrowed(""), |data| {
         String::from_utf8_lossy(data.as_ref())
     });
-
     let payload: Value = from_str(&payload).unwrap();
     println!("请求体: {payload:?}");
 
     // 创建一个请求构建器
     let response = client
-        .post("http://127.0.0.1:4000/login")
+        .post(format!("http://{}/{}", instance.ip_and_port(), path))
         // 添加请求头
         .headers(headers)
         // 添加请求体
@@ -60,5 +59,17 @@ pub async fn forward_request(
     // 获取响应体
     let body = response.text().await?;
     println!("响应体: {body}");
-    Ok(())
+    Ok(body)
+}
+
+pub async fn forward_post(
+    req: &mut Request,
+    service_name: &str,
+    path: &str,
+    group: &str,
+    cluster: Vec<String>,
+) -> Result<String> {
+    let instance = get_healthy_instance(service_name, group, cluster).await?;
+    let res_body = forward_request_post(req, instance, path).await?;
+    Ok(res_body)
 }

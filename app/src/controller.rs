@@ -1,4 +1,4 @@
-use dev_kit::nacos::rpc::forward_request;
+use dev_kit::nacos::rpc::forward_post;
 use dev_kit::{
     graceful_stop::get_handle,
     jwt_utils::{get_claims, secret_key::get_jwt_utils},
@@ -16,8 +16,16 @@ struct LoginRequest<'a> {
 }
 
 #[handler]
+pub async fn forward_test(req: &mut Request, res: &mut Response) {
+
+    let rs = forward_post(req, "salvo-4000", "login", "DEFAULT_GROUP", vec![]).await;
+    println!("rs={rs:?}");
+    render_success(res, rs.unwrap(), "成功转发");
+}
+
+
+#[handler]
 pub async fn login(req: &mut Request, res: &mut Response) {
-    forward_request(req, "").await;
     let login_req = match req.parse_json::<LoginRequest>().await {
         Ok(login_req) => login_req,
         Err(e) => {

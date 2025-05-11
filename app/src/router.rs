@@ -1,4 +1,4 @@
-use crate::controller::{graceful_stop, hello, login, profile};
+use crate::controller::{graceful_stop, hello, login, profile,forward_test};
 use dev_kit::{jwt_utils::middleware::jwt_auth, rbac::create_casbin_hoop};
 use salvo::{Router, prelude::*};
 use std::time::Duration;
@@ -14,6 +14,7 @@ pub async fn init_router() -> Router {
         .hoop(max_concurrency(200))
         .hoop(Timeout::new(Duration::from_secs(5)))
         .push(Router::with_path("login").post(login))
+              .push(Router::with_path("forward").post(forward_test))
         .push(
             Router::new()
                 .hoop(jwt_auth)

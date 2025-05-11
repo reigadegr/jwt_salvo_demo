@@ -1,6 +1,6 @@
 pub mod naming_service;
-pub mod service_instance;
 pub mod rpc;
+pub mod service_instance;
 
 use crate::config::get_cfg;
 use naming_service::{MyNamingEventListener, get_naming_service};

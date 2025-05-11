@@ -1,5 +1,4 @@
 use dev_kit::nacos::rpc::forward_request;
-use dev_kit::nacos::rpc::forward_request2;
 use dev_kit::{
     graceful_stop::get_handle,
     jwt_utils::{get_claims, secret_key::get_jwt_utils},
@@ -18,7 +17,7 @@ struct LoginRequest<'a> {
 
 #[handler]
 pub async fn login(req: &mut Request, res: &mut Response) {
-    forward_request2(req, "").await;
+    forward_request(req, "").await;
     let login_req = match req.parse_json::<LoginRequest>().await {
         Ok(login_req) => login_req,
         Err(e) => {

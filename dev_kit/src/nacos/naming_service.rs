@@ -7,7 +7,7 @@ use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tracing::info;
 
-struct MyNamingEventListener;
+pub struct MyNamingEventListener;
 
 impl NamingEventListener for MyNamingEventListener {
     fn event(&self, event: Arc<NamingChangeEvent>) {
@@ -35,16 +35,4 @@ static NAMING_SERVICE: Lazy<NamingService> = Lazy::new(|| {
 #[must_use]
 pub fn get_naming_service() -> &'static NamingService {
     &NAMING_SERVICE
-}
-
-pub async fn start_listener() {
-    let listener = Arc::new(MyNamingEventListener);
-    let _subscribe_ret = get_naming_service()
-        .subscribe(
-            get_cfg().nacos_cfg.service_name.clone(),
-            Some(get_cfg().nacos_cfg.group_name.clone()),
-            Vec::default(),
-            listener,
-        )
-        .await;
 }

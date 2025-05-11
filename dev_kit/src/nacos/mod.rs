@@ -1,20 +1,21 @@
 pub mod naming_service;
+pub mod service_instance;
+
 use crate::config::get_cfg;
-use nacos_sdk::api::naming::ServiceInstance;
-use naming_service::{get_naming_service, start_listener};
-use once_cell::sync::Lazy;
+use naming_service::{MyNamingEventListener, get_naming_service};
+use service_instance::get_service_instance;
+use std::sync::Arc;
 
-static SERVICE_INSTANCE: Lazy<ServiceInstance> = Lazy::new(|| ServiceInstance {
-    ip: get_cfg().nacos_cfg.service_ip.clone(),
-    port: get_cfg().nacos_cfg.service_port,
-    weight: get_cfg().nacos_cfg.weight,
-    cluster_name: get_cfg().nacos_cfg.cluster_name.clone(),
-    ..Default::default()
-});
-
-#[must_use]
-pub fn get_service_instance() -> &'static ServiceInstance {
-    &SERVICE_INSTANCE
+pub async fn start_listener() {
+    let listener = Arc::new(MyNamingEventListener);
+    let _subscribe_ret = get_naming_service()
+        .subscribe(
+            get_cfg().nacos_cfg.service_name.clone(),
+            Some(get_cfg().nacos_cfg.group_name.clone()),
+            Vec::default(),
+            listener,
+        )
+        .await;
 }
 
 pub async fn init_nacos_service() {

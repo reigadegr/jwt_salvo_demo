@@ -19,7 +19,14 @@ struct LoginRequest<'a> {
 pub async fn forward_test(req: &mut Request, res: &mut Response) {
     let rs = forward_post(req, "salvo-4000", "login", None, None).await;
     println!("rs={rs:?}");
-    render_success(res, rs.unwrap(), "成功转发");
+    match rs {
+        Ok(rs) => render_success(res, rs, "成功转发"),
+        Err(e) => render_error(
+            res,
+            &format!("Cannot forward: {e}"),
+            StatusCode::INTERNAL_SERVER_ERROR,
+        ),
+    }
 }
 
 #[handler]

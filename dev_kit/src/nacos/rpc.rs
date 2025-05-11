@@ -60,9 +60,11 @@ pub async fn forward_post(
     req: &mut Request,
     service_name: &str,
     path: &str,
-    group: &str,
-    cluster: Vec<String>,
+    group: Option<&str>,
+    cluster: Option<Vec<String>>,
 ) -> Result<Value> {
+    let group = group.unwrap_or("DEFAULT_GROUP");
+    let cluster = cluster.unwrap_or_default();
     let instance = get_healthy_instance(service_name, group, cluster).await?;
     let res_body = forward_request_post(req, instance, path).await?;
     Ok(res_body)

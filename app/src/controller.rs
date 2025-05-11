@@ -17,7 +17,7 @@ struct LoginRequest<'a> {
 
 #[handler]
 pub async fn forward_test(req: &mut Request, res: &mut Response) {
-    let rs = forward_post(req, "salvo-4000", "login", "DEFAULT_GROUP", vec![]).await;
+    let rs = forward_post(req, "salvo-4000", "login", None, None).await;
     println!("rs={rs:?}");
     render_success(res, rs.unwrap(), "成功转发");
 }

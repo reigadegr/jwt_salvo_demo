@@ -25,7 +25,7 @@ pub async fn forward_request_post(
     req: &mut Request,
     instance: ServiceInstance,
     path: &str,
-) -> Result<Value> {
+) -> Result<String> {
     // 创建一个reqwest客户端
     let client = reqwest::Client::new();
 
@@ -52,7 +52,6 @@ pub async fn forward_request_post(
         .await?;
 
     let body = response.text().await?;
-    let body: Value = from_str(&body)?;
     Ok(body)
 }
 
@@ -62,7 +61,7 @@ pub async fn forward_post(
     path: &str,
     group: Option<&str>,
     cluster: Option<Vec<String>>,
-) -> Result<Value> {
+) -> Result<String> {
     let group = group.unwrap_or("DEFAULT_GROUP");
     let cluster = cluster.unwrap_or_default();
     let instance = get_healthy_instance(service_name, group, cluster).await?;

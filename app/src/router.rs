@@ -1,5 +1,7 @@
-use crate::controller::demo::{forward_test, hello, login, profile};
-use crate::controller::graceful_stop;
+use crate::controller::{
+    demo::{forward_test, hello, login, profile},
+    graceful_stop,
+};
 use dev_kit::{jwt_utils::middleware::jwt_auth, rbac::create_casbin_hoop};
 use salvo::{Router, prelude::*};
 use std::time::Duration;

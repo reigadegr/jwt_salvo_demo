@@ -1,10 +1,6 @@
 pub mod demo;
 
-use dev_kit::{
-    graceful_stop::get_handle,
-    nacos::deregister_instance,
-    result::render_success,
-};
+use dev_kit::{graceful_stop::get_handle, nacos::deregister_instance, result::render_success};
 use salvo::prelude::*;
 
 #[handler]

@@ -19,18 +19,17 @@ pub async fn forward_test(req: &mut Request, res: &mut Response) {
     match rs {
         Ok(rs) => {
             println!("成功转发={rs:?}");
-            render_success(res, rs, "成功转发");
+            return render_success(res, rs, "成功转发");
         }
         Err(e) => {
             println!("失败转发={e}");
-            render_error(
+            return render_error(
                 res,
                 &format!("Cannot forward: {e}"),
                 StatusCode::INTERNAL_SERVER_ERROR,
             );
         }
     }
-    render_success(res, "喵喵喵zzz", "喵喵喵转发");
 }
 
 #[handler]

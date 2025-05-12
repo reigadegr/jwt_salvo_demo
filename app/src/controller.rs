@@ -18,15 +18,21 @@ struct LoginRequest<'a> {
 #[handler]
 pub async fn forward_test(req: &mut Request, res: &mut Response) {
     let rs = forward_post(req, "salvo-4000", "login", None, None).await;
-    println!("rs 喵喵喵喵喵喵喵喵喵喵喵={rs:?}");
     match rs {
-        Ok(rs) => render_success(res, rs, "成功转发"),
-        Err(e) => render_error(
-            res,
-            &format!("Cannot forward: {e}"),
-            StatusCode::INTERNAL_SERVER_ERROR,
-        ),
+        Ok(rs) => {
+            println!("成功转发={rs:?}");
+            render_success(res, rs, "成功转发");
+        }
+        Err(e) => {
+            println!("失败转发={e}");
+            render_error(
+                res,
+                &format!("Cannot forward: {e}"),
+                StatusCode::INTERNAL_SERVER_ERROR,
+            );
+        }
     }
+    render_success(res, "喵喵喵zzz", "喵喵喵转发");
 }
 
 #[handler]

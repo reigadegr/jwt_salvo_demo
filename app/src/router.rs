@@ -9,7 +9,7 @@ const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
 pub async fn init_router() -> Router {
     let casbin_hoop = create_casbin_hoop(MODEL, POLICY).await;
     Router::new()
-        .get(hello)
+        .goal(hello)
         .push(Router::with_path("stop/{secs}").get(graceful_stop))
         .hoop(max_concurrency(200))
         .hoop(Timeout::new(Duration::from_secs(5)))

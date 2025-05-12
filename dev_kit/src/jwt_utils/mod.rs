@@ -1,9 +1,10 @@
-use crate::models::Claims;
+pub mod middleware;
+pub mod models;
+pub mod secret_key;
+
+use models::Claims;
 use salvo::Depot;
 use std::any::Any;
-
-pub mod middleware;
-pub mod secret_key;
 
 pub fn save_claims(depot: &mut Depot, claims: Claims) {
     depot.insert("claims", claims);

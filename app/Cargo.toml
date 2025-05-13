@@ -11,3 +11,4 @@ mimalloc.workspace = true
 dev_kit = { version = "0.1.0", path = "../dev_kit" }
 once_cell.workspace = true
 anyhow.workspace = true
+tracing.workspace = true

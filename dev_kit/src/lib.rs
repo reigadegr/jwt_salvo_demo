@@ -23,9 +23,12 @@ use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 async fn use_http1() -> Server<TcpAcceptor> {
     let ip = &get_cfg().client_cfg.service_ip;
     let port = &get_cfg().client_cfg.service_port;
-    let server_args = format!("{ip}:{port}");
-
-    let acceptor = TcpListener::new(server_args).bind().await;
+    let listen_addr = format!("{ip}:{port}");
+    println!(
+        "📖 Open API Page: http://{}/scalar",
+        listen_addr.replace("0.0.0.0", "127.0.0.1")
+    );
+    let acceptor = TcpListener::new(listen_addr).bind().await;
     Server::new(acceptor)
 }
 

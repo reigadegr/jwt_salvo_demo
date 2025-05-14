@@ -13,7 +13,7 @@ struct LoginRequest<'a> {
     password: &'a str,
 }
 
-#[handler]
+#[endpoint]
 pub async fn forward_test(req: &mut Request, res: &mut Response) {
     let rs = forward_post(req, "salvo-4000", "login", None, None).await;
     match rs {
@@ -32,7 +32,7 @@ pub async fn forward_test(req: &mut Request, res: &mut Response) {
     }
 }
 
-#[handler]
+#[endpoint]
 pub async fn login(req: &mut Request, res: &mut Response) {
     let login_req = match req.parse_json::<LoginRequest>().await {
         Ok(login_req) => login_req,
@@ -67,7 +67,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     render_error(res, "Invalid credentials", StatusCode::UNAUTHORIZED);
 }
 
-#[handler]
+#[endpoint]
 pub async fn profile(res: &mut Response, depot: &Depot) {
     match get_claims(depot) {
         Ok(user) => render_success(res, user, "成功获取用户信息"),
@@ -79,7 +79,7 @@ pub async fn profile(res: &mut Response, depot: &Depot) {
     }
 }
 
-#[handler]
+#[endpoint]
 pub async fn hello(res: &mut Response) {
     render_success(res, "Hello World", "OK");
 }

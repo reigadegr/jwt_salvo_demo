@@ -3,7 +3,7 @@ pub mod demo;
 use dev_kit::{graceful_stop::get_handle, nacos::deregister_instance, result::render_success};
 use salvo::prelude::*;
 
-#[handler]
+#[endpoint]
 pub async fn graceful_stop(req: &Request, res: &mut Response) {
     deregister_instance().await;
     let time = req.param::<u64>("secs").unwrap();

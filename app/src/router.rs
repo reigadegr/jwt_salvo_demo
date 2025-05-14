@@ -11,7 +11,7 @@ const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
 
 pub async fn init_router() -> Router {
     let casbin_hoop = create_casbin_hoop(MODEL, POLICY).await;
-    Router::new()
+    let router = Router::new()
         .hoop(Logger::new())
         .goal(hello)
         .push(Router::with_path("stop/{secs}").get(graceful_stop))
@@ -24,5 +24,10 @@ pub async fn init_router() -> Router {
                 .hoop(jwt_auth)
                 .hoop(casbin_hoop)
                 .push(Router::with_path("profile").get(profile)),
-        )
+        );
+
+    let doc = OpenApi::new("salvo web api", "0.0.1").merge_router(&router);
+    router
+        .unshift(doc.into_router("/api-doc/openapi.json"))
+        .unshift(Scalar::new("/api-doc/openapi.json").into_router("scalar"))
 }

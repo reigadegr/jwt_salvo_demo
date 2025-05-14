@@ -18,9 +18,12 @@ pub mod result;
 use config::get_cfg;
 use nacos::init_nacos_service;
 use redisync::init_redis_pool;
-use salvo::{conn::tcp::TcpAcceptor, prelude::*};
+use salvo::{
+    conn::tcp::TcpAcceptor,
+    prelude::*,
+};
 
-async fn use_http1() -> Server<TcpAcceptor> {
+pub async fn use_http1() -> TcpAcceptor {
     let ip = &get_cfg().client_cfg.service_ip;
     let port = &get_cfg().client_cfg.service_port;
     let listen_addr = format!("{ip}:{port}");
@@ -28,12 +31,10 @@ async fn use_http1() -> Server<TcpAcceptor> {
         "📖 Open API Page: http://{}/scalar",
         listen_addr.replace("0.0.0.0", "127.0.0.1")
     );
-    let acceptor = TcpListener::new(listen_addr).bind().await;
-    Server::new(acceptor)
+    TcpListener::new(listen_addr).bind().await
 }
 
-pub async fn application_init() -> Server<TcpAcceptor> {
+pub async fn application_init() {
     init_redis_pool().await;
     init_nacos_service().await;
-    use_http1().await
 }

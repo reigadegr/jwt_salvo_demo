@@ -2,7 +2,7 @@ use super::router::init_router;
 use chrono::Local;
 use dev_kit::{
     application_init, config::init_config, graceful_stop::get_handle, graceful_stop::init_handle,
-    jwt_utils::secret_key::init_jwt_utils,
+    jwt_utils::secret_key::init_jwt_utils, use_http1,
 };
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 use std::fmt;
@@ -28,7 +28,9 @@ pub async fn init_misc() -> (Server<TcpAcceptor>, Router) {
     );
 
     let router = init_router().await;
-    let server = application_init().await;
+    let () = application_init().await;
+    let acceptor = use_http1().await;
+    let server = Server::new(acceptor);
     init_handle(server.handle());
     tokio::spawn(shutdown_signal());
     (server, router)

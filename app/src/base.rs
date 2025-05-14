@@ -1,13 +1,14 @@
 use super::router::init_router;
 use chrono::Local;
 use dev_kit::{
-    application_init, config::init_config, graceful_stop::get_handle, graceful_stop::init_handle,
-    jwt_utils::secret_key::init_jwt_utils, use_http1,
+    application_init,
+    config::init_config,
+    jwt_utils::secret_key::init_jwt_utils,
+    server_handle::{init_handle, shutdown_signal},
+    use_http1,
 };
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 use std::fmt;
-use tokio::signal;
-use tracing::info;
 use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
 
 struct LoggerFormatter;
@@ -34,29 +35,4 @@ pub async fn init_misc() -> (Server<TcpAcceptor>, Router) {
     init_handle(server.handle());
     tokio::spawn(shutdown_signal());
     (server, router)
-}
-
-async fn shutdown_signal() {
-    let ctrl_c = async {
-        signal::ctrl_c()
-            .await
-            .expect("failed to install Ctrl+C handler");
-    };
-
-    #[cfg(unix)]
-    let terminate = async {
-        signal::unix::signal(signal::unix::SignalKind::terminate())
-            .expect("failed to install signal handler")
-            .recv()
-            .await;
-    };
-
-    #[cfg(not(unix))]
-    let terminate = std::future::pending::<()>();
-
-    tokio::select! {
-        () = ctrl_c => info!("ctrl_c signal received"),
-        () = terminate => info!("terminate signal received"),
-    }
-    get_handle().stop_graceful(std::time::Duration::from_secs(60));
 }

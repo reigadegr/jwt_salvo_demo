@@ -8,17 +8,18 @@
 )]
 
 pub mod config;
-pub mod graceful_stop;
 pub mod jwt_utils;
 pub mod nacos;
 pub mod rbac;
 pub mod redisync;
 pub mod result;
+pub mod server_handle;
 
 use config::get_cfg;
 use nacos::init_nacos_service;
 use redisync::init_redis_pool;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
+use server_handle::shutdown_signal;
 
 pub async fn use_http1() -> TcpAcceptor {
     let ip = &get_cfg().client_cfg.service_ip;
@@ -30,8 +31,8 @@ pub async fn use_http1() -> TcpAcceptor {
     );
     TcpListener::new(listen_addr).bind().await
 }
-
 pub async fn application_init() {
     init_redis_pool().await;
     init_nacos_service().await;
+    tokio::spawn(shutdown_signal());
 }

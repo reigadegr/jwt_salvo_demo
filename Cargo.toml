@@ -14,7 +14,7 @@ salvo = { version = "0.88.1", features = [
   "logging",
   "oapi",
 ] }
-jsonwebtoken = "9.3.1"
+jsonwebtoken = { version = "10.2.0", features = ["rust_crypto"] }
 serde = { version = "1.0.228", features = ["derive"] }
 chrono = "0.4.42"
 tokio = { version = "1.49.0", features = ["full"] }

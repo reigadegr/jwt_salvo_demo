@@ -1,11 +1,12 @@
 use anyhow::anyhow;
 use once_cell::sync::OnceCell;
 use serde::Deserialize;
+use serde_json::from_str;
 
 static PROFILE: OnceCell<Config> = OnceCell::new();
 
 pub fn init_config(app_config: &str) {
-    let profile: Config = toml::from_str(app_config).unwrap();
+    let profile: Config = from_str(app_config).unwrap();
     PROFILE
         .set(profile)
         .map_err(|_| anyhow!("Failed to set configuration."))

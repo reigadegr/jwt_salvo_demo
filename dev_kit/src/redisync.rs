@@ -3,7 +3,7 @@ use anyhow::{Result, anyhow};
 use bb8::{Pool, PooledConnection, RunError};
 use bb8_redis::{
     RedisConnectionManager,
-    redis::{AsyncCommands, RedisError, ToRedisArgs},
+    redis::{AsyncCommands, RedisError, ToRedisArgs, ToSingleRedisArg},
 };
 use std::time::Duration;
 use tokio::sync::OnceCell;
@@ -52,7 +52,7 @@ pub async fn redis_read(key: &str) -> Result<String> {
 
 pub async fn redis_set_with_expiry<T>(key: &str, value: T, time: i64) -> Result<()>
 where
-    T: ToRedisArgs + Send + Sync,
+    T: ToSingleRedisArg + ToRedisArgs + Send + Sync,
 {
     let mut con = get_db_con().await?;
     let _: () = con.set(key, value).await?;
@@ -62,7 +62,7 @@ where
 
 pub async fn redis_write<T>(key: &str, value: T) -> Result<()>
 where
-    T: ToRedisArgs + Send + Sync,
+    T: ToSingleRedisArg + ToRedisArgs + Send + Sync,
 {
     let mut con = get_db_con().await?;
     let _: () = con.set(key, value).await?;

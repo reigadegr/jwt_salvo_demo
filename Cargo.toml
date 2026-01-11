@@ -26,7 +26,6 @@ casbin = "2.19.1"
 bb8-redis = "0.26.0"
 bb8 = "0.9.1"
 mimalloc = { version = "0.1.48", features = [
-  "local_dynamic_tls",
   "no_thp",
   "override",
 ] }

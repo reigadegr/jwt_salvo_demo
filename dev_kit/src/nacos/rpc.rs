@@ -1,4 +1,4 @@
-use super::naming_service::get_naming_service;
+use crate::nacos::naming_service::get_naming_service;
 use anyhow::Result;
 use nacos_sdk::api::naming::ServiceInstance;
 use salvo::http::Request;

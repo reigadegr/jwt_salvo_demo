@@ -1,5 +1,8 @@
-use super::{save_claims, secret_key::get_jwt_utils};
-use crate::{redisync::redis_read, result::render_error};
+use crate::{
+    jwt_utils::{save_claims, secret_key::get_jwt_utils},
+    redisync::redis_read,
+    result::render_error,
+};
 use salvo::{http::StatusCode, prelude::*};
 use stringzilla::sz;
 

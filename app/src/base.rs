@@ -1,4 +1,4 @@
-use super::router::init_router;
+use crate::router::init_router;
 use chrono::Local;
 use dev_kit::{
     application_init,

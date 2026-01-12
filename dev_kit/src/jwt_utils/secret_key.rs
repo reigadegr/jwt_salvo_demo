@@ -1,4 +1,4 @@
-use super::models::Claims;
+use crate::jwt_utils::models::Claims;
 use anyhow::anyhow;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{

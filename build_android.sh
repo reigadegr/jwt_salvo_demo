@@ -30,7 +30,7 @@ export RUSTFLAGS="
 " 
 
 if [ "$1" = "release" ] || [ "$1" = "r" ]; then
-    cargo +nightly ndk --platform 35 -t arm64-v8a build --target aarch64-linux-android -Z trim-paths --verbose -r -Z build-std --
+    cargo +nightly ndk --platform 35 -t arm64-v8a build --target aarch64-linux-android -Z trim-paths --verbose -r -Z build-std=core,alloc,std,panic_abort --
 else
     cargo +nightly ndk --platform 35 -t arm64-v8a build --target aarch64-linux-android -Z trim-paths --verbose  --
 fi

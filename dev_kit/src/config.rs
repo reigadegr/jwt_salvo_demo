@@ -1,7 +1,7 @@
 use anyhow::anyhow;
 use once_cell::sync::OnceCell;
 use serde::Deserialize;
-use serde_json::from_str;
+use toml::from_str;
 
 static PROFILE: OnceCell<Config> = OnceCell::new();
 

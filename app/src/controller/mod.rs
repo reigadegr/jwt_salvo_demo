@@ -6,7 +6,7 @@ use salvo::prelude::*;
 #[endpoint]
 pub async fn graceful_stop(req: &Request, res: &mut Response) {
     deregister_instance().await;
-    let time = req.param::<u64>("secs").unwrap();
+    let time = req.param::<u64>("secs").unwrap_or(1);
     tokio::spawn(async move {
         tokio::time::sleep(std::time::Duration::from_secs(time)).await;
         get_handle().stop_graceful(std::time::Duration::from_secs(60));

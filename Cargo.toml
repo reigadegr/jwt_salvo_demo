@@ -38,6 +38,7 @@ reqwest = { version = "0.13.1", default-features = false, features = [
   "http2",
 ] }
 serde_json = "1.0.149"
+obfstr = "0.4.4"
 
 [profile.dev]
 debug = true

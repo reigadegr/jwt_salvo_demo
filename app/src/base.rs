@@ -7,6 +7,7 @@ use dev_kit::{
     server_handle::{init_handle, shutdown_signal},
     use_http1,
 };
+use obfstr::obfstr;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 use std::fmt;
 use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
@@ -21,12 +22,13 @@ impl FormatTime for LoggerFormatter {
 
 pub async fn init_misc() -> (Server<TcpAcceptor>, Router) {
     tracing_subscriber::fmt().with_timer(LoggerFormatter).init();
+    let config = obfstr!(include_str!("../application.toml")).to_string();
 
-    init_config(include_str!("../application.toml"));
-    init_jwt_utils(
-        include_bytes!("../keys/private_key.pem"),
-        include_bytes!("../keys/public_key.pem"),
-    );
+    let private_key = include_bytes!("../keys/private_key.pem");
+    let public_key = include_bytes!("../keys/public_key.pem");
+
+    init_config(&config);
+    init_jwt_utils(private_key, public_key);
 
     let router = init_router().await;
     let () = application_init().await;

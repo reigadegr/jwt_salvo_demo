@@ -29,6 +29,7 @@ pub async fn use_http1() -> TcpAcceptor {
     let ip = &get_cfg().client_cfg.service_ip;
     let port = get_cfg().client_cfg.service_port;
     let listen_addr = format!("{ip}:{port}");
+    #[cfg(debug_assertions)]
     println!(
         "📖 Open API Page: http://{}/scalar",
         listen_addr.replace("0.0.0.0", "127.0.0.1")

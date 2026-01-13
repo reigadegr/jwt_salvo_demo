@@ -20,6 +20,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
             return render_error(res, &msg, StatusCode::BAD_REQUEST);
         }
     };
+    #[cfg(debug_assertions)]
     println!("{login_req:?}");
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {

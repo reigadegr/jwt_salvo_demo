@@ -43,7 +43,7 @@ impl<T: Serialize> Scribe for ResData<'_, T> {
 
 pub fn render_success<T>(res: &mut Response, data: T, msg: &str)
 where
-    T: serde::Serialize + Sync + Send,
+    T: Serialize + Sync,
 {
     let data = ResData::success(&data, msg);
     res.render(Json(data));
@@ -51,7 +51,7 @@ where
 
 pub const fn render_success2<'a, T>(data: &'a T, msg: &'a str) -> ResData<'a, T>
 where
-    T: serde::Serialize + Sync,
+    T: Serialize + Sync,
 {
     ResData::success(data, msg)
 }

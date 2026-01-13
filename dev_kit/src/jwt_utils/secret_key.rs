@@ -48,13 +48,10 @@ impl SecretKey {
         }
     }
 
-    pub fn generate_token(&self, role: &str, user_id: &str) -> (Result<String, Error>, i64) {
+    pub fn generate_token(&self, role: &str, user_id: &str) -> Result<String, Error> {
         let exp_time = Utc::now() + Duration::seconds(20);
         let claims = Claims::new(role, user_id, exp_time);
-        (
-            encode(&self.jwt_header, &claims, &self.encode_key),
-            exp_time.timestamp(),
-        )
+        encode(&self.jwt_header, &claims, &self.encode_key)
     }
 
     pub fn validate_token(&self, token: &str) -> Result<Claims, Error> {

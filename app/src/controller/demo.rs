@@ -1,7 +1,5 @@
-use dev_kit::nacos::rpc::forward_post;
 use dev_kit::{
     jwt_utils::{get_claims, secret_key::get_jwt_utils},
-    redisync::redis_set_with_expiry,
     result::{render_error, render_success},
 };
 use salvo::{http::StatusCode, prelude::*};
@@ -11,25 +9,6 @@ use serde::Deserialize;
 struct LoginRequest<'a> {
     username: &'a str,
     password: &'a str,
-}
-
-#[endpoint]
-pub async fn forward_test(req: &mut Request, res: &mut Response) {
-    let rs = forward_post(req, "salvo-4000", "login", None, None).await;
-    match rs {
-        Ok(rs) => {
-            println!("成功转发={rs:?}");
-            return render_success(res, &rs, "成功转发");
-        }
-        Err(e) => {
-            println!("失败转发={e}");
-            return render_error(
-                res,
-                &format!("Cannot forward: {e}"),
-                StatusCode::INTERNAL_SERVER_ERROR,
-            );
-        }
-    }
 }
 
 #[endpoint]
@@ -45,7 +24,7 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     // 模拟用户验证
     if login_req.username == "user1" && login_req.password == "password1" {
         let role = "admin";
-        let (token, exp_time) = get_jwt_utils().generate_token(role, login_req.username);
+        let token = get_jwt_utils().generate_token(role, login_req.username);
         let Ok(token) = token else {
             return render_error(
                 res,
@@ -53,15 +32,6 @@ pub async fn login(req: &mut Request, res: &mut Response) {
                 StatusCode::INTERNAL_SERVER_ERROR,
             );
         };
-        // 把token保存到Redis
-        let save_token = redis_set_with_expiry(login_req.username, &token, exp_time).await;
-        if save_token.is_err() {
-            return render_error(
-                res,
-                "Server has some error.",
-                StatusCode::INTERNAL_SERVER_ERROR,
-            );
-        }
         return render_success(res, &token, "成功生成token");
     }
     render_error(res, "Invalid credentials", StatusCode::UNAUTHORIZED);

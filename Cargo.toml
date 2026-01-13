@@ -23,20 +23,13 @@ salvo-casbin = "0.73.3"
 anyhow = "1.0.100"
 once_cell = "1.21.3"
 casbin = "2.19.1"
-bb8-redis = "0.26.0"
-bb8 = "0.9.1"
 mimalloc = { version = "0.1.48", features = ["no_thp", "override"] }
-nacos-sdk = "0.5.3"
 toml = { version = "0.9.11", default-features = false, features = [
   "parse",
   "serde",
 ] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["local-time"] }
-reqwest = { version = "0.13.1", default-features = false, features = [
-  "json",
-  "http2",
-] }
 serde_json = "1.0.149"
 obfstr = "0.4.4"
 

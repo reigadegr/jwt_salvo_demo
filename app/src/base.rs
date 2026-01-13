@@ -30,7 +30,7 @@ pub async fn init_misc() -> (Server<TcpAcceptor>, Router) {
     init_jwt_utils(private_key, public_key);
 
     let router = init_router().await;
-    let () = application_init().await;
+    let () = application_init();
     let acceptor = use_http1().await;
     let server = Server::new(acceptor);
     init_handle(server.handle());

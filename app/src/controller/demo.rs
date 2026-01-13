@@ -19,7 +19,7 @@ pub async fn forward_test(req: &mut Request, res: &mut Response) {
     match rs {
         Ok(rs) => {
             println!("成功转发={rs:?}");
-            return render_success(res, rs, "成功转发");
+            return render_success(res, &rs, "成功转发");
         }
         Err(e) => {
             println!("失败转发={e}");

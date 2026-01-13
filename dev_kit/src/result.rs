@@ -4,7 +4,7 @@ use serde_json::to_vec;
 
 // 定义响应数据结构体
 #[derive(Serialize, Debug)]
-pub struct ResData<'a, T> {
+pub struct ResData<'a, T: ?Sized> {
     pub code: i8,
     #[serde(borrow)]
     pub msg: &'a str,
@@ -13,7 +13,7 @@ pub struct ResData<'a, T> {
 }
 
 // 统一响应结构体的实现
-impl<'a, T> ResData<'a, T> {
+impl<'a, T: ?Sized> ResData<'a, T> {
     pub const fn success(data: &'a T, message: &'a str) -> Self {
         ResData {
             code: 0,
@@ -41,19 +41,12 @@ impl<T: Serialize> Scribe for ResData<'_, T> {
     }
 }
 
-pub fn render_success<T>(res: &mut Response, data: T, msg: &str)
+pub fn render_success<'a, T>(res: &mut Response, data: &'a T, msg: &'a str)
 where
-    T: Serialize + Sync,
+    T: Serialize + Sync + ?Sized,
 {
-    let data = ResData::success(&data, msg);
+    let data = ResData::success(data, msg);
     res.render(Json(data));
-}
-
-pub const fn render_success2<'a, T>(data: &'a T, msg: &'a str) -> ResData<'a, T>
-where
-    T: Serialize + Sync,
-{
-    ResData::success(data, msg)
 }
 
 pub fn render_error(res: &mut Response, msg: &str, status_code: StatusCode) {

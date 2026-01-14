@@ -5,8 +5,12 @@ edition.workspace = true
 
 [dependencies]
 salvo.workspace = true
+chrono.workspace = true
 once_cell.workspace = true
+obfstr.workspace = true
 anyhow.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 my_config.workspace = true
+my_jwt.workspace = true
+tracing-subscriber.workspace = true

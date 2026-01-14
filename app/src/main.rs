@@ -14,17 +14,21 @@
     clippy::missing_panics_doc
 )]
 
-mod base;
 mod controller;
 mod router;
 
-use base::init_misc;
+use crate::router::init_router;
+use my_config::config::init_config;
+use my_server_handle::init_misc;
+use obfstr::obfstr;
 
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[tokio::main]
 async fn main() {
-    let (server, router) = init_misc().await;
+    init_config(obfstr!(include_str!("../application.toml")));
+    let server = init_misc().await;
+    let router = init_router().await;
     server.serve(router).await;
 }

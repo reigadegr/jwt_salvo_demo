@@ -1,1 +1,1 @@
-taplo fmt Cargo.toml */*.toml
+taplo fmt Cargo.toml */*.toml */*/*.toml

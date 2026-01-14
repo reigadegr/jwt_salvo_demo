@@ -1,0 +1,12 @@
+[package]
+name = "my_server_handle"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+salvo.workspace = true
+once_cell.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+my_config.workspace = true

@@ -6,17 +6,9 @@ if [ ! -d target ]; then
 fi
 name=$(basename $(dirname "$0"))
 {
-    for i in Cargo.toml; do
-        echo -e "---以下为项目的$i---\n"
+    for i in $(find crates -name "*.rs") $(find app -name "*.rs") Cargo.toml crates/*/Cargo.toml; do
+        echo "这是$i: "
         cat $i
-        echo "------------------------"
-    done
-    
-    for i in $(grep "members" Cargo.toml | awk -F '[][]' '{print $2}' | sed 's/,//g' | sed 's/"//g'); do
-        for i in $(find $i/src -name "*.rs") $i/Cargo.toml; do
-            echo "这是$i: "
-            cat $i
-            echo "\n--------------\n"
-        done
+        echo "\n--------------\n"
     done
 } > target/"$name"_all_code.txt

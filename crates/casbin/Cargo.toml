@@ -1,0 +1,10 @@
+[package]
+name = "my_casbin"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+salvo.workspace = true
+salvo-casbin.workspace = true
+casbin.workspace = true
+my_jwt.workspace = true

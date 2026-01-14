@@ -1,7 +1,5 @@
-use crate::{
-    jwt_utils::{save_claims, secret_key::get_jwt_utils},
-    result::render_error,
-};
+use crate::jwt_utils::{save_claims, secret_key::get_jwt_utils};
+use my_ext::result::render_error;
 use salvo::{http::StatusCode, prelude::*};
 use stringzilla::sz;
 

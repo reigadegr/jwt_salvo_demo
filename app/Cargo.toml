@@ -1,5 +1,5 @@
 [package]
-name = "jwt_salvo_demo"
+name = "app"
 version.workspace = true
 edition.workspace = true
 
@@ -8,7 +8,11 @@ salvo.workspace = true
 serde.workspace = true
 tokio.workspace = true
 mimalloc.workspace = true
-dev_kit = { version = "0.1.0", path = "../dev_kit" }
 tracing-subscriber.workspace = true
 chrono.workspace = true
 obfstr.workspace = true
+my_ext.workspace = true
+my_jwt.workspace = true
+my_casbin.workspace = true
+my_config.workspace = true
+my_server_handle.workspace = true

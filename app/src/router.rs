@@ -2,7 +2,8 @@ use crate::controller::{
     demo::{hello, login, profile},
     graceful_stop,
 };
-use dev_kit::{jwt_utils::middleware::jwt_auth, rbac::create_casbin_hoop};
+use my_casbin::rbac::create_casbin_hoop;
+use my_jwt::jwt_utils::middleware::jwt_auth;
 use salvo::{Router, prelude::*};
 use std::time::Duration;
 

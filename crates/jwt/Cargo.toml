@@ -1,19 +1,15 @@
 [package]
-name = "dev_kit"
+name = "my_jwt"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
 salvo.workspace = true
-jsonwebtoken.workspace = true
 serde.workspace = true
-chrono.workspace = true
+jsonwebtoken.workspace = true
 stringzilla.workspace = true
 once_cell.workspace = true
-salvo-casbin.workspace = true
-casbin.workspace = true
 anyhow.workspace = true
 tokio.workspace = true
-toml.workspace = true
-tracing.workspace = true
-serde_json.workspace = true
+chrono.workspace = true
+my_ext.workspace = true

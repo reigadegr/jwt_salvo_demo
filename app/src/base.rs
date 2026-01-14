@@ -1,11 +1,10 @@
 use crate::router::init_router;
 use chrono::Local;
-use dev_kit::{
-    application_init,
-    config::init_config,
-    jwt_utils::secret_key::init_jwt_utils,
+use my_config::config::init_config;
+use my_jwt::jwt_utils::secret_key::init_jwt_utils;
+use my_server_handle::{
     server_handle::{init_handle, shutdown_signal},
-    use_http1,
+    shutdown_signal_monitor_init, use_http1,
 };
 use obfstr::{obfbytes, obfstr};
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
@@ -30,7 +29,7 @@ pub async fn init_misc() -> (Server<TcpAcceptor>, Router) {
     init_jwt_utils(private_key, public_key);
 
     let router = init_router().await;
-    let () = application_init();
+    let () = shutdown_signal_monitor_init();
     let acceptor = use_http1().await;
     let server = Server::new(acceptor);
     init_handle(server.handle());

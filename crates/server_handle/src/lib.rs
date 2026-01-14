@@ -15,13 +15,9 @@
     clippy::missing_errors_doc
 )]
 
-pub mod config;
-pub mod jwt_utils;
-pub mod rbac;
-pub mod result;
 pub mod server_handle;
 
-use config::get_cfg;
+use my_config::config::get_cfg;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 use server_handle::shutdown_signal;
 
@@ -36,6 +32,6 @@ pub async fn use_http1() -> TcpAcceptor {
     );
     TcpListener::new(listen_addr).bind().await
 }
-pub fn application_init() {
+pub fn shutdown_signal_monitor_init() {
     tokio::spawn(shutdown_signal());
 }

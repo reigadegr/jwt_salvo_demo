@@ -19,8 +19,9 @@ mod router;
 
 use crate::router::init_router;
 use my_config::config::init_config;
+use my_jwt::jwt_utils::secret_key::init_jwt_utils;
 use my_server_handle::init_misc;
-use obfstr::obfstr;
+use obfstr::{obfbytes, obfstr};
 
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
@@ -28,6 +29,11 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 #[tokio::main]
 async fn main() {
     init_config(obfstr!(include_str!("../application.toml")));
+    let private_key = obfbytes!(include_bytes!("../../keys/private_key.pem"));
+    let public_key = obfbytes!(include_bytes!("../../keys/public_key.pem"));
+
+    init_jwt_utils(private_key, public_key);
+
     let server = init_misc().await;
     let router = init_router().await;
     server.serve(router).await;

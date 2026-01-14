@@ -19,8 +19,6 @@ pub mod shutdown_handle;
 
 use chrono::Local;
 use my_config::config::get_cfg;
-use my_jwt::jwt_utils::secret_key::init_jwt_utils;
-use obfstr::obfbytes;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 use shutdown_handle::{init_handle, shutdown_signal};
 use std::fmt;
@@ -51,11 +49,6 @@ pub fn shutdown_signal_monitor_init() {
 
 pub async fn init_misc() -> Server<TcpAcceptor> {
     tracing_subscriber::fmt().with_timer(LoggerFormatter).init();
-
-    let private_key = obfbytes!(include_bytes!("../../../keys/private_key.pem"));
-    let public_key = obfbytes!(include_bytes!("../../../keys/public_key.pem"));
-
-    init_jwt_utils(private_key, public_key);
 
     let () = shutdown_signal_monitor_init();
     let acceptor = use_http1().await;

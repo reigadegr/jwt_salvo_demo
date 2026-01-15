@@ -45,7 +45,7 @@ tracing-subscriber = { version = "0.3.22", features = ["local-time"] }
 serde_json = "1.0.149"
 obfstr = "0.4.4"
 sea-orm = { version = "^2.0.0-rc.28", features = [
-  "sqlx-mysql",
+  "sqlx-postgres",
   "runtime-tokio-rustls",
   "with-chrono",
   "debug-print",

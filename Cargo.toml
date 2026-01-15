@@ -14,6 +14,11 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace.dependencies]
+my_jwt = { path = "crates/jwt" }
+my_casbin = { path = "crates/casbin" }
+my_config = { path = "crates/config" }
+my_server_handle = { path = "crates/server_handle" }
+my_ext = { path = "crates/ext" }
 salvo = { version = "0.88.1", features = [
   "timeout",
   "concurrency-limiter",
@@ -39,11 +44,15 @@ tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["local-time"] }
 serde_json = "1.0.149"
 obfstr = "0.4.4"
-my_jwt = { path = "crates/jwt" }
-my_casbin = { path = "crates/casbin" }
-my_config = { path = "crates/config" }
-my_server_handle = { path = "crates/server_handle" }
-my_ext = { path = "crates/ext" }
+sea-orm = { version = "^2.0.0-rc.28", features = [
+  "sqlx-mysql",
+  "runtime-tokio-rustls",
+  "with-chrono",
+  "debug-print",
+  "macros",
+  "with-uuid",
+] }
+uuid = { version = "1.19.0", features = ["v7", "serde", "fast-rng"] }
 
 [profile.dev]
 debug = true

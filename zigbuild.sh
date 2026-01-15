@@ -1,29 +1,34 @@
 #!/bin/sh
-rm -rf $(find ./target/aarch64-unknown-linux-musl/ -name "*jwt_salvo_demo*")
 
-export RUSTFLAGS="-C default-linker-libraries \
--Z external-clangrt \
--Z macro-backtrace \
--Z remap-cwd-prefix=. \
--Z dep-info-omit-d-target \
--C llvm-args=-enable-ml-inliner=release \
--C llvm-args=-inliner-interactive-include-default \
--C llvm-args=-ml-inliner-model-selector=arm64-mixed \
--C llvm-args=-ml-inliner-skip-policy=if-caller-not-cold \
--C link-args=-fomit-frame-pointer \
--C link-args=-static-libgcc \
--C link-args=-static-libstdc++ \
--C llvm-args=-mergefunc-use-aliases \
--C llvm-args=-enable-shrink-wrap=1 \
--C llvm-args=-enable-gvn-hoist \
--C llvm-args=-enable-loop-versioning-licm \
--C link-args=-Wl,-O3,--gc-sections,--as-needed \
--C link-args=-Wl,-z,norelro,-x,-s,--strip-all,-z,now
+export RUSTFLAGS="
+    -Z mir-opt-level=2
+    -Z dylib-lto=yes
+    -Z inline-mir=yes
+    -Z share-generics=yes
+    -Z remap-cwd-prefix=.
+    -Z function-sections=yes
+    -Z dep-info-omit-d-target
+    -Z flatten-format-args=yes
+    -Z saturating-float-casts=yes
+    -Z mir-enable-passes=+Inline
+    -Z precise-enum-drop-elaboration=yes
+    -C default-linker-libraries
+    -C relro-level=full
+    -C code-model=small
+    -C relocation-model=static
+    -C symbol-mangling-version=v0
+    -C llvm-args=-fp-contract=off
+    -C llvm-args=-enable-misched
+    -C llvm-args=-enable-post-misched
+    -C llvm-args=-enable-dfa-jump-thread
+    -C link-arg=-Wl,--sort-section=alignment
+    -C link-args=-Wl,--gc-sections,--as-needed
+    -C link-args=-Wl,-x,-z,noexecstack,-s,--strip-all
 " 
 
 if [ "$1" = "release" ] || [ "$1" = "r" ]; then
     export CFLAGS="-Wno-error=date-time"
-    cargo-zigbuild +nightly zigbuild --target aarch64-unknown-linux-musl -Z trim-paths --verbose -r -Z build-std --
+    cargo +nightly zigbuild --target aarch64-unknown-linux-musl -Z trim-paths --verbose -r -Z build-std=core,alloc,std,panic_abort --
 else
-    cargo-zigbuild +nightly zigbuild --target aarch64-unknown-linux-musl -Z trim-paths --verbose --
+    cargo +nightly zigbuild --target aarch64-unknown-linux-musl -Z trim-paths --verbose --
 fi

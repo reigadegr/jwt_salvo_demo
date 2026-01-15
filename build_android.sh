@@ -1,5 +1,4 @@
 #!/bin/sh
-rm -rf $(find ./target/aarch64-linux-android/ -name "*jwt_salvo_demo*")
 
 export RUSTFLAGS="
     -Z mir-opt-level=2
@@ -27,7 +26,7 @@ export RUSTFLAGS="
     -C link-arg=-Wl,--sort-section=alignment
     -C link-args=-Wl,-O3,--gc-sections,--as-needed
     -C link-args=-Wl,-x,-z,noexecstack,--pack-dyn-relocs=android+relr,-s,--strip-all,--relax
-" 
+"
 
 if [ "$1" = "release" ] || [ "$1" = "r" ]; then
     cargo +nightly ndk --platform 35 -t arm64-v8a build --target aarch64-linux-android -Z trim-paths --verbose -r -Z build-std=core,alloc,std,panic_abort --

@@ -1,3 +1,3 @@
 cargo fmt
 cargo clippy
-sh toml_fmt.sh
+taplo fmt Cargo.toml */*.toml */*/*.toml

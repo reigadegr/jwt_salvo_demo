@@ -15,7 +15,6 @@ pub async fn init_router() -> Router {
     let router = Router::new()
         .hoop(Logger::new())
         .goal(hello)
-        .push(Router::with_path("stop/{secs}").get(graceful_stop))
         .hoop(max_concurrency(200))
         .hoop(Timeout::new(Duration::from_secs(5)))
         .push(Router::with_path("login").post(login))
@@ -23,7 +22,8 @@ pub async fn init_router() -> Router {
             Router::new()
                 .hoop(jwt_auth)
                 .hoop(casbin_hoop)
-                .push(Router::with_path("profile").get(profile)),
+                .push(Router::with_path("profile").get(profile))
+                .push(Router::with_path("stop/{secs}").get(graceful_stop)),
         );
 
     let doc = OpenApi::new("salvo web api", "0.0.1").merge_router(&router);

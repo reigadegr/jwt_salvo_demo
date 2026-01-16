@@ -47,9 +47,8 @@ pub fn shutdown_signal_monitor_init() {
     tokio::spawn(shutdown_signal());
 }
 
-pub async fn init_misc() -> Server<TcpAcceptor> {
+pub async fn init_server() -> Server<TcpAcceptor> {
     tracing_subscriber::fmt().with_timer(LoggerFormatter).init();
-
     let () = shutdown_signal_monitor_init();
     let acceptor = use_http1().await;
     let server = Server::new(acceptor);

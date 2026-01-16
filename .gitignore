@@ -6,3 +6,5 @@ output*
 **/*dump.rdb*
 .idea
 */src/*.sh
+**/*.patch
+**/*.diff

@@ -21,7 +21,7 @@ use chrono::Local;
 use my_config::config::get_cfg;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 use shutdown_handle::{init_handle, shutdown_signal};
-use std::{fmt, time::Duration};
+use std::fmt;
 use tracing::Level;
 use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
 
@@ -46,16 +46,9 @@ pub async fn use_http1() -> Server<TcpAcceptor> {
     let acceptor = TcpListener::new(listen_addr).bind().await;
 
     let mut server = Server::new(acceptor);
-    server
-        .http1_mut()
-        .keep_alive(true)
-        .header_read_timeout(Some(Duration::from_secs(5)));
+    server.http1_mut().keep_alive(true);
 
     server
-}
-
-pub fn shutdown_signal_monitor_init() {
-    tokio::spawn(shutdown_signal());
 }
 
 pub async fn init_server() -> Server<TcpAcceptor> {
@@ -70,7 +63,6 @@ pub async fn init_server() -> Server<TcpAcceptor> {
         .with_max_level(log_level)
         .init();
 
-    let () = shutdown_signal_monitor_init();
     let server = use_http1().await;
     init_handle(server.handle());
     tokio::spawn(shutdown_signal());

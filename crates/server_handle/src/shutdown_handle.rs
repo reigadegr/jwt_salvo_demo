@@ -39,5 +39,12 @@ pub async fn shutdown_signal() {
         () = ctrl_c => info!("ctrl_c signal received"),
         () = terminate => info!("terminate signal received"),
     }
-    get_handle().stop_graceful(std::time::Duration::from_secs(60));
+
+    #[cfg(debug_assertions)]
+    let timeout = std::time::Duration::from_secs(1);
+
+    #[cfg(not(debug_assertions))]
+    let timeout = std::time::Duration::from_secs(60);
+
+    get_handle().stop_graceful(timeout);
 }

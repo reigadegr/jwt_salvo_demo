@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+my_ext.workspace = true
 salvo.workspace = true
 serde.workspace = true
 jsonwebtoken.workspace = true
@@ -12,4 +13,3 @@ once_cell.workspace = true
 anyhow.workspace = true
 tokio.workspace = true
 chrono.workspace = true
-my_ext.workspace = true

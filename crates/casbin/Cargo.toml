@@ -4,7 +4,7 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+my_jwt.workspace = true
 salvo.workspace = true
 salvo-casbin.workspace = true
 casbin.workspace = true
-my_jwt.workspace = true

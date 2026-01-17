@@ -46,7 +46,7 @@ pub async fn use_http1() -> Server<TcpAcceptor> {
     let acceptor = TcpListener::new(listen_addr).bind().await;
 
     let mut server = Server::new(acceptor);
-    server.http1_mut().keep_alive(true);
+    server.http1_mut().keep_alive(false);
 
     server
 }

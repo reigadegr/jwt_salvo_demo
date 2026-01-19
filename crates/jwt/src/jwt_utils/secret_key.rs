@@ -49,7 +49,16 @@ impl SecretKey {
     }
 
     pub fn generate_token(&self, role: &str, user_id: &str) -> Result<String, Error> {
-        let exp_time = Utc::now() + Duration::seconds(20);
+        self.generate_token_with_expiry(role, user_id, Duration::seconds(20))
+    }
+
+    pub fn generate_token_with_expiry(
+        &self,
+        role: &str,
+        user_id: &str,
+        expiry: Duration,
+    ) -> Result<String, Error> {
+        let exp_time = Utc::now() + expiry;
         let claims = Claims::new(role, user_id, exp_time);
         encode(&self.jwt_header, &claims, &self.encode_key)
     }

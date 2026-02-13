@@ -30,14 +30,15 @@ use obfstr::{obfbytes, obfstr};
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[tokio::main]
-async fn main() {
-    init_config(obfstr!(include_str!("../application.toml")));
+async fn main() -> anyhow::Result<()> {
+    let _ = init_config(obfstr!(include_str!("../application.toml")));
     let private_key = obfbytes!(include_bytes!("../../keys/private_key.pem"));
     let public_key = obfbytes!(include_bytes!("../../keys/public_key.pem"));
 
-    init_jwt_utils(private_key, public_key);
+    let _ = init_jwt_utils(private_key, public_key);
 
     let server = init_server().await;
-    let router = init_router().await;
+    let router = init_router().await?;
     server.serve(router).await;
+    Ok(())
 }

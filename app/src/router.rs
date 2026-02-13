@@ -5,6 +5,7 @@ use crate::{
     },
     sea_orm::init_db,
 };
+use anyhow::Context;
 use my_casbin::rbac::create_casbin_hoop;
 use my_jwt::jwt_utils::middleware::jwt_auth;
 use obfstr::obfstr;
@@ -17,15 +18,16 @@ const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
 
 #[derive(Debug, Clone)]
 struct AppState {
+    #[allow(dead_code)]
     pub conn: DatabaseConnection,
 }
 
-pub async fn init_router() -> Router {
-    let casbin_hoop = create_casbin_hoop(MODEL, POLICY).await;
+pub async fn init_router() -> anyhow::Result<Router> {
+    let casbin_hoop = create_casbin_hoop(MODEL, POLICY).await?;
 
     let conn = init_db(obfstr!("postgres://user:pass@127.0.0.1:5432/db"))
         .await
-        .unwrap();
+        .context("Failed to initialize database")?;
     let state = AppState { conn };
 
     let router = Router::new()
@@ -44,7 +46,7 @@ pub async fn init_router() -> Router {
         );
 
     let doc = OpenApi::new("salvo web api", "0.0.1").merge_router(&router);
-    router
+    Ok(router
         .unshift(doc.into_router("/api-doc/openapi.json"))
-        .unshift(Scalar::new("/api-doc/openapi.json").into_router("scalar"))
+        .unshift(Scalar::new("/api-doc/openapi.json").into_router("scalar")))
 }

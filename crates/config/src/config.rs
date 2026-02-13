@@ -5,16 +5,18 @@ use toml::from_str;
 
 static PROFILE: OnceCell<Config> = OnceCell::new();
 
-pub fn init_config(app_config: &str) {
-    let profile: Config = from_str(app_config).unwrap();
+pub fn init_config(app_config: &str) -> anyhow::Result<()> {
+    let profile: Config = from_str(app_config)?;
     PROFILE
         .set(profile)
-        .map_err(|_| anyhow!("Failed to set configuration."))
-        .unwrap();
+        .map_err(|_| anyhow!("Failed to set configuration."))?;
+    Ok(())
 }
 
-pub fn get_cfg() -> &'static Config {
-    PROFILE.get().unwrap()
+pub fn get_cfg() -> anyhow::Result<&'static Config> {
+    PROFILE
+        .get()
+        .ok_or_else(|| anyhow!("Configuration not initialized."))
 }
 
 #[derive(Deserialize)]

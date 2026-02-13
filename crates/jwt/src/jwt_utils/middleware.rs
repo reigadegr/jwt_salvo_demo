@@ -20,7 +20,21 @@ pub async fn jwt_auth(
 
     let jwt_token: &str = sz::find(token, " ").map_or(token, |p| token[p + 1..].trim_start());
 
-    if let Ok(claims) = get_jwt_utils().validate_token(jwt_token) {
+    let Ok(jwt_utils) = get_jwt_utils() else {
+        ctrl.skip_rest();
+        return render_error(
+            res,
+            "JWT not initialized",
+            StatusCode::INTERNAL_SERVER_ERROR,
+        );
+    };
+
+    if let Ok(claims) = jwt_utils.validate_token(jwt_token) {
+        // 调试：打印当前用户信息
+        println!(
+            "🔐 JWT Auth - username: {}, role: {}",
+            claims.username, claims.role
+        );
         save_claims(depot, claims);
     } else {
         // 场景: 传入的token过期或者不合法

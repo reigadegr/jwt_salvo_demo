@@ -49,7 +49,7 @@ fn authenticate_user(username: &str, password: &str) -> Option<&'static str> {
 
 // 抽离：Token生成与响应处理
 fn generate_token_response(res: &mut Response, role: &str, username: &str) {
-    match get_jwt_utils().generate_token(role, username) {
+    match get_jwt_utils().unwrap().generate_token(role, username) {
         Ok(token) => render_success(res, &token, "成功生成token"),
         Err(_) => render_error(
             res,

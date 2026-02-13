@@ -1,0 +1,22 @@
+[package]
+name = "my_gateway"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "gateway"
+path = "src/bin/gateway.rs"
+
+[dependencies]
+async-trait.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+mimalloc.workspace = true
+once_cell.workspace = true
+percent-encoding.workspace = true
+phf.workspace = true
+pingora.workspace = true
+rust-embed.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true

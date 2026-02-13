@@ -1,5 +1,5 @@
 use crate::jwt_utils::models::Claims;
-use anyhow::anyhow;
+use anyhow::{Context, anyhow};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode, errors::Error,
@@ -8,22 +8,25 @@ use once_cell::sync::OnceCell;
 
 static JWT_UTILS: OnceCell<SecretKey> = OnceCell::new();
 
-pub fn init_jwt_utils(private_key: &[u8], public_key: &[u8]) {
-    let encode_key = EncodingKey::from_ed_pem(private_key).unwrap();
-    let decode_key = DecodingKey::from_ed_pem(public_key).unwrap();
+pub fn init_jwt_utils(private_key: &[u8], public_key: &[u8]) -> anyhow::Result<()> {
+    let encode_key = EncodingKey::from_ed_pem(private_key)
+        .context("Failed to create encoding key from private key")?;
+    let decode_key = DecodingKey::from_ed_pem(public_key)
+        .context("Failed to create decoding key from public key")?;
     let jwt_header = Header::new(Algorithm::EdDSA);
     let mut jwt_vation = Validation::new(Algorithm::EdDSA);
     jwt_vation.leeway = 0;
     let jwt_utils = SecretKey::new(encode_key, decode_key, jwt_header, jwt_vation);
     JWT_UTILS
         .set(jwt_utils)
-        .map_err(|_| anyhow!("Failed to set jwt_utils."))
-        .unwrap();
+        .map_err(|_| anyhow!("Failed to set jwt_utils."))?;
+    Ok(())
 }
 
-#[must_use]
-pub fn get_jwt_utils() -> &'static SecretKey {
-    JWT_UTILS.get().unwrap()
+pub fn get_jwt_utils() -> anyhow::Result<&'static SecretKey> {
+    JWT_UTILS
+        .get()
+        .ok_or_else(|| anyhow!("JWT utils not initialized."))
 }
 
 pub struct SecretKey {

@@ -2,42 +2,58 @@ use anyhow::anyhow;
 use once_cell::sync::OnceCell;
 use salvo::server::ServerHandle;
 use tokio::signal;
+use tracing::error;
 use tracing::info;
 
 static SERVER_HANDLE: OnceCell<ServerHandle> = OnceCell::new();
 
-pub fn init_handle(handle: ServerHandle) {
+pub fn init_handle(handle: ServerHandle) -> anyhow::Result<()> {
     SERVER_HANDLE
         .set(handle)
-        .map_err(|_| anyhow!("Failed to set server handle."))
-        .unwrap();
+        .map_err(|_| anyhow!("Failed to set server handle."))?;
+    Ok(())
 }
 
-pub fn get_handle() -> &'static ServerHandle {
-    SERVER_HANDLE.get().unwrap()
+pub fn get_handle() -> anyhow::Result<&'static ServerHandle> {
+    SERVER_HANDLE
+        .get()
+        .ok_or_else(|| anyhow!("Server handle not initialized."))
 }
 
 pub async fn shutdown_signal() {
     let ctrl_c = async {
-        signal::ctrl_c()
-            .await
-            .expect("failed to install Ctrl+C handler");
+        match signal::ctrl_c().await {
+            Ok(()) => Some(()),
+            Err(e) => {
+                error!("Failed to install Ctrl+C handler: {e}");
+                std::process::exit(1);
+            }
+        }
     };
 
     #[cfg(unix)]
     let terminate = async {
-        signal::unix::signal(signal::unix::SignalKind::terminate())
-            .expect("failed to install signal handler")
-            .recv()
-            .await;
+        match signal::unix::signal(signal::unix::SignalKind::terminate()) {
+            Ok(mut signal) => {
+                if signal.recv().await == Some(()) {
+                    Some(())
+                } else {
+                    None
+                }
+            }
+            Err(e) => {
+                error!("Failed to install signal handler: {e}");
+                std::process::exit(1);
+            }
+        }
     };
 
     #[cfg(not(unix))]
-    let terminate = std::future::pending::<()>();
+    let terminate = std::future::pending::<Option<()>>();
 
     tokio::select! {
-        () = ctrl_c => info!("ctrl_c signal received"),
-        () = terminate => info!("terminate signal received"),
+        Some(()) = ctrl_c => info!("ctrl_c signal received"),
+        Some(()) = terminate => info!("terminate signal received"),
     }
 
     #[cfg(debug_assertions)]
@@ -46,5 +62,11 @@ pub async fn shutdown_signal() {
     #[cfg(not(debug_assertions))]
     let timeout = std::time::Duration::from_secs(60);
 
-    get_handle().stop_graceful(timeout);
+    match get_handle() {
+        Ok(handle) => handle.stop_graceful(timeout),
+        Err(e) => {
+            error!("Failed to get server handle: {e}");
+            std::process::exit(1);
+        }
+    }
 }

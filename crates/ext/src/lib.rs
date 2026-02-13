@@ -6,7 +6,9 @@
     clippy::complexity,
     clippy::perf,
     clippy::correctness,
-    clippy::suspicious
+    clippy::suspicious,
+    clippy::unwrap_used,
+    clippy::expect_used
 )]
 #![allow(
     clippy::similar_names,

@@ -6,7 +6,9 @@
     clippy::complexity,
     clippy::perf,
     clippy::correctness,
-    clippy::suspicious
+    clippy::suspicious,
+    clippy::unwrap_used,
+    clippy::expect_used
 )]
 #![allow(
     clippy::similar_names,
@@ -34,8 +36,15 @@ impl FormatTime for LoggerFormatter {
 }
 
 pub async fn use_http1() -> Server<TcpAcceptor> {
-    let ip = &get_cfg().client_cfg.service_ip;
-    let port = get_cfg().client_cfg.service_port;
+    let cfg = match get_cfg() {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Failed to get configuration: {e}");
+            std::process::exit(1);
+        }
+    };
+    let ip = &cfg.client_cfg.service_ip;
+    let port = cfg.client_cfg.service_port;
     let listen_addr = format!("{ip}:{port}");
     #[cfg(debug_assertions)]
     println!(
@@ -64,7 +73,10 @@ pub async fn init_server() -> Server<TcpAcceptor> {
         .init();
 
     let server = use_http1().await;
-    init_handle(server.handle());
+    if let Err(e) = init_handle(server.handle()) {
+        eprintln!("Failed to initialize server handle: {e}");
+        std::process::exit(1);
+    }
     tokio::spawn(shutdown_signal());
     server
 }

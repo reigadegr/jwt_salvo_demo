@@ -10,7 +10,7 @@ use salvo_casbin::{CasbinHoop, CasbinVals};
 pub async fn create_casbin_hoop(
     model: &str,
     policy: &str,
-) -> anyhow::Result<
+) -> Result<
     CasbinHoop<Enforcer, fn(&mut Request, &mut Depot) -> Result<Option<CasbinVals>, StatusError>>,
 > {
     //定义配置

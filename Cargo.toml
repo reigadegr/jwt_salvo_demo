@@ -48,7 +48,7 @@ salvo = { version = "0.91.1", features = [
 jsonwebtoken = { version = "10.3.0", features = ["rust_crypto"] }
 serde = { version = "1.0.228", features = ["derive"] }
 chrono = "0.4.44"
-tokio = { version = "1.52.0", features = ["full"] }
+tokio = { version = "1.52.1", features = ["full"] }
 stringzilla = "=4.4.0"
 salvo-casbin = "0.73.3"
 anyhow = "1.0.102"

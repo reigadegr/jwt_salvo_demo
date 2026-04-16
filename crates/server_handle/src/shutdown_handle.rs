@@ -2,8 +2,7 @@ use anyhow::anyhow;
 use once_cell::sync::OnceCell;
 use salvo::server::ServerHandle;
 use tokio::signal;
-use tracing::error;
-use tracing::info;
+use tracing::{error, info};
 
 static SERVER_HANDLE: OnceCell<ServerHandle> = OnceCell::new();
 

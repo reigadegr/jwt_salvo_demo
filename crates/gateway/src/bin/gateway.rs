@@ -1,13 +1,3 @@
-#![warn(
-    clippy::nursery,
-    clippy::pedantic,
-    clippy::style,
-    clippy::complexity,
-    clippy::perf,
-    clippy::correctness,
-    clippy::suspicious
-)]
-
 use chrono::Local;
 use my_gateway::Gateway;
 use pingora::prelude::*;

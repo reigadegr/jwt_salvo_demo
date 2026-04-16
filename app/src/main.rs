@@ -1,30 +1,13 @@
-#![warn(
-    clippy::all,
-    clippy::nursery,
-    clippy::pedantic,
-    clippy::style,
-    clippy::complexity,
-    clippy::perf,
-    clippy::correctness,
-    clippy::suspicious,
-    clippy::unwrap_used,
-    clippy::expect_used
-)]
-#![allow(
-    clippy::similar_names,
-    clippy::missing_safety_doc,
-    clippy::missing_panics_doc
-)]
-
 mod controller;
 mod router;
 mod sea_orm;
 
-use crate::router::init_router;
 use my_config::config::init_config;
 use my_jwt::jwt_utils::secret_key::init_jwt_utils;
 use my_server_handle::init_server;
 use obfstr::{obfbytes, obfstr};
+
+use crate::router::init_router;
 
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;

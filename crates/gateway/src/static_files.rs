@@ -1,21 +1,3 @@
-//! Static file serving module for the gateway.
-//!
-//! Provides functionality to serve static files embedded at compile time,
-//! with proper MIME type detection and SPA (Single Page Application) support.
-
-#![warn(
-    clippy::all,
-    clippy::nursery,
-    clippy::pedantic,
-    clippy::style,
-    clippy::complexity,
-    clippy::perf,
-    clippy::correctness,
-    clippy::suspicious,
-    clippy::unwrap_used,
-    clippy::expect_used
-)]
-
 use pingora::http::ResponseHeader;
 use pingora::prelude::*;
 use rust_embed::RustEmbed;

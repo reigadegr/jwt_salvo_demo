@@ -1,16 +1,3 @@
-#![warn(
-    clippy::all,
-    clippy::nursery,
-    clippy::pedantic,
-    clippy::style,
-    clippy::complexity,
-    clippy::perf,
-    clippy::correctness,
-    clippy::suspicious,
-    clippy::unwrap_used,
-    clippy::expect_used
-)]
-
 use async_trait::async_trait;
 use pingora::http::{RequestHeader, ResponseHeader};
 use pingora::prelude::*;

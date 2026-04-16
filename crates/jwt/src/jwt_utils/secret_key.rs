@@ -1,10 +1,11 @@
-use crate::jwt_utils::models::Claims;
 use anyhow::{Context, anyhow};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode, errors::Error,
 };
 use once_cell::sync::OnceCell;
+
+use crate::jwt_utils::models::Claims;
 
 static JWT_UTILS: OnceCell<SecretKey> = OnceCell::new();
 

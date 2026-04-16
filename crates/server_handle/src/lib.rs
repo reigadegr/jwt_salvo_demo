@@ -1,29 +1,11 @@
-#![warn(
-    clippy::all,
-    clippy::nursery,
-    clippy::pedantic,
-    clippy::style,
-    clippy::complexity,
-    clippy::perf,
-    clippy::correctness,
-    clippy::suspicious,
-    clippy::unwrap_used,
-    clippy::expect_used
-)]
-#![allow(
-    clippy::similar_names,
-    clippy::missing_safety_doc,
-    clippy::missing_panics_doc,
-    clippy::missing_errors_doc
-)]
-
 pub mod shutdown_handle;
+
+use std::fmt;
 
 use chrono::Local;
 use my_config::config::get_cfg;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 use shutdown_handle::{init_handle, shutdown_signal};
-use std::fmt;
 use tracing::Level;
 use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
 

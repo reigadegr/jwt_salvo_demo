@@ -3,6 +3,9 @@ name = "my_jwt"
 version.workspace = true
 edition.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 my_ext.workspace = true
 salvo.workspace = true

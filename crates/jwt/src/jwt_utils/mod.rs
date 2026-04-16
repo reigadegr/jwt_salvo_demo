@@ -2,9 +2,10 @@ pub mod middleware;
 pub mod models;
 pub mod secret_key;
 
+use std::any::Any;
+
 use models::Claims;
 use salvo::Depot;
-use std::any::Any;
 
 pub fn save_claims(depot: &mut Depot, claims: Claims) {
     depot.insert("claims", claims);

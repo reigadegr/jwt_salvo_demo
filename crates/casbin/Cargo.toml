@@ -3,6 +3,9 @@ name = "my_casbin"
 version.workspace = true
 edition.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 anyhow.workspace = true
 my_jwt.workspace = true

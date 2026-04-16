@@ -3,6 +3,9 @@ name = "my_config"
 version.workspace = true
 edition.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 serde.workspace = true
 once_cell.workspace = true

@@ -1,10 +1,7 @@
 use anyhow::{Context, Result};
 use casbin::{CoreApi, DefaultModel, Enforcer, StringAdapter};
 use my_jwt::jwt_utils::get_claims;
-use salvo::{
-    http::StatusError,
-    {Depot, Request},
-};
+use salvo::{Depot, Request, http::StatusError};
 use salvo_casbin::{CasbinHoop, CasbinVals};
 
 pub async fn create_casbin_hoop(

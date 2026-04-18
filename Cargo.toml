@@ -6,7 +6,8 @@ members = [
   "crates/config",
   "crates/server_handle",
   "crates/ext",
-  "crates/domain",
+  "crates/orm",
+  "crates/demo",
 ]
 resolver = "3"
 
@@ -38,7 +39,8 @@ my_casbin = { path = "crates/casbin" }
 my_config = { path = "crates/config" }
 my_server_handle = { path = "crates/server_handle" }
 my_ext = { path = "crates/ext" }
-my_domain = { path = "crates/domain" }
+my_orm = { path = "crates/orm" }
+my_demo = { path = "crates/demo" }
 salvo = { version = "0.91.1", features = [
   "timeout",
   "concurrency-limiter",

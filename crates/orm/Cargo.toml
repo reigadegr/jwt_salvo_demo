@@ -1,0 +1,15 @@
+[package]
+name = "my_orm"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow.workspace = true
+chrono.workspace = true
+tokio.workspace = true
+tracing-subscriber.workspace = true
+sea-orm.workspace = true
+log.workspace = true

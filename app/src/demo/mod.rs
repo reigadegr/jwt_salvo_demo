@@ -4,7 +4,7 @@ use my_ext::result::{render_error, render_success};
 use my_jwt::jwt_utils::get_claims;
 use salvo::{http::StatusCode, prelude::*};
 
-use crate::{
+use my_demo::{
     dto::LoginRequest,
     facade::AuthFacade,
     repository::{DEFAULT_USERS, InMemoryUserRepository},

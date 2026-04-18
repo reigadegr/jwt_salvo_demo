@@ -8,9 +8,8 @@ use obfstr::obfstr;
 use salvo::{Router, affix_state, prelude::*};
 use sea_orm::DatabaseConnection;
 
-use my_domain::{hello, login, profile};
-
-use crate::sea_orm::init_db;
+use crate::demo::{hello, login, profile};
+use my_orm::init_db;
 
 const MODEL: &str = include_str!("../casbin/rbac_with_pattern_model.conf");
 const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");

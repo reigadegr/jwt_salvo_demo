@@ -1,6 +1,7 @@
 use anyhow::anyhow;
+use my_ext::result::render_success;
 use once_cell::sync::OnceCell;
-use salvo::server::ServerHandle;
+use salvo::{prelude::*, server::ServerHandle};
 use tokio::signal;
 use tracing::{error, info};
 
@@ -68,4 +69,17 @@ pub async fn shutdown_signal() {
             std::process::exit(1);
         }
     }
+}
+
+/// 优雅停止端点 - 基础设施层关注点
+#[endpoint]
+pub async fn graceful_stop(req: &Request, res: &mut Response) {
+    let time = req.param::<u64>("secs").unwrap_or(1);
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(time)).await;
+        if let Ok(handle) = get_handle() {
+            handle.stop_graceful(std::time::Duration::from_mins(1));
+        }
+    });
+    render_success(res, "开始停止接收请求", "OK");
 }

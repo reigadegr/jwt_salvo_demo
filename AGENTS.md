@@ -3,6 +3,9 @@
 sh debug.sh
 ```
 
+> ⚠️ 全程禁止执行 `cargo build`、`cargo build --release` 以及其他任何 `cargo build*` 构建命令。
+> 如需验证或测试，请统一执行 `sh debug.sh`（已包含格式化、clippy 与 `cargo test` 的全套检查）。
+
 ## 提交说明
 
 提交时必须遵循约定式提交（Conventional Commits）。

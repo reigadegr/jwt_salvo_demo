@@ -9,6 +9,8 @@ use shutdown_handle::{init_handle, shutdown_signal};
 use tracing::Level;
 use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
 
+pub use shutdown_handle::graceful_stop;
+
 struct LoggerFormatter;
 
 impl FormatTime for LoggerFormatter {

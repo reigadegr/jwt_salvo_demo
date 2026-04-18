@@ -3,17 +3,14 @@ use std::time::Duration;
 use anyhow::Context;
 use my_casbin::rbac::create_casbin_hoop;
 use my_jwt::jwt_utils::middleware::jwt_auth;
+use my_server_handle::graceful_stop;
 use obfstr::obfstr;
 use salvo::{Router, affix_state, prelude::*};
 use sea_orm::DatabaseConnection;
 
-use crate::{
-    controller::{
-        demo::{hello, login, profile},
-        graceful_stop,
-    },
-    sea_orm::init_db,
-};
+use my_domain::{hello, login, profile};
+
+use crate::sea_orm::init_db;
 
 const MODEL: &str = include_str!("../casbin/rbac_with_pattern_model.conf");
 const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");

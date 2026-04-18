@@ -1,0 +1,14 @@
+[package]
+name = "my_domain"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+my_jwt.workspace = true
+my_ext.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+salvo.workspace = true

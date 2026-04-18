@@ -1,4 +1,3 @@
-mod controller;
 mod router;
 mod sea_orm;
 

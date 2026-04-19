@@ -1,3 +1,5 @@
+use anyhow::Result;
+
 use crate::{entity::User, repository::UserRepository};
 
 /// 认证服务 - 纯领域逻辑
@@ -16,12 +18,14 @@ impl<R: UserRepository> AuthService<R> {
     /// 认证用户
     ///
     /// 返回认证成功的用户，失败返回 None
-    pub fn authenticate(&self, username: &str, password: &str) -> Option<User> {
-        let user = self.user_repo.find_by_username(username)?;
+    pub async fn authenticate(&self, username: &str, password: &str) -> Result<Option<User>> {
+        let Some(user) = self.user_repo.find_by_username(username).await? else {
+            return Ok(None);
+        };
         if user.verify_password(password) {
-            Some(user)
+            Ok(Some(user))
         } else {
-            None
+            Ok(None)
         }
     }
 }

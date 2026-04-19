@@ -1,7 +1,11 @@
-use std::{collections::HashMap, sync::LazyLock};
+use std::{collections::HashMap, future::Future, sync::LazyLock};
+
+use anyhow::Result;
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 use crate::{
     entity::{User, UserId},
+    sea_orm_entity,
     value_object::{Password, Role, Username},
 };
 
@@ -9,8 +13,9 @@ use crate::{
 ///
 /// Repository: 封装数据访问，提供类似集合的接口
 pub trait UserRepository: Send + Sync {
-    fn find_by_username(&self, username: &str) -> Option<User>;
-    fn find_by_id(&self, id: &UserId) -> Option<User>;
+    fn find_by_username(&self, username: &str)
+    -> impl Future<Output = Result<Option<User>>> + Send;
+    fn find_by_id(&self, id: &UserId) -> impl Future<Output = Result<Option<User>>> + Send;
 }
 
 /// 内存用户仓储实现 - 用于测试/演示
@@ -38,16 +43,59 @@ impl InMemoryUserRepository {
 }
 
 impl UserRepository for InMemoryUserRepository {
-    fn find_by_username(&self, username: &str) -> Option<User> {
-        self.users.get(username).cloned()
+    async fn find_by_username(&self, username: &str) -> Result<Option<User>> {
+        Ok(self.users.get(username).cloned())
     }
 
-    fn find_by_id(&self, id: &UserId) -> Option<User> {
-        self.users.values().find(|u| u.id() == id).cloned()
+    async fn find_by_id(&self, id: &UserId) -> Result<Option<User>> {
+        Ok(self.users.values().find(|u| u.id() == id).cloned())
     }
 }
 
-/// 默认测试用户数据
+/// 数据库用户仓储实现 - 基于 `SeaORM` 查询
+pub struct DatabaseUserRepository {
+    conn: DatabaseConnection,
+}
+
+impl DatabaseUserRepository {
+    #[must_use]
+    pub const fn new(conn: DatabaseConnection) -> Self {
+        Self { conn }
+    }
+
+    fn model_to_user(model: &sea_orm_entity::Model) -> User {
+        User::new(
+            UserId::new(model.user_id.as_str()),
+            Username::new(model.username.as_str()),
+            Password::new(model.password.as_str()),
+            Role::new(model.role.as_str()),
+        )
+    }
+}
+
+impl UserRepository for DatabaseUserRepository {
+    async fn find_by_username(&self, username: &str) -> Result<Option<User>> {
+        let model = sea_orm_entity::Entity::find()
+            .filter(sea_orm_entity::Column::Username.eq(username))
+            .one(&self.conn)
+            .await
+            .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
+
+        Ok(model.as_ref().map(Self::model_to_user))
+    }
+
+    async fn find_by_id(&self, id: &UserId) -> Result<Option<User>> {
+        let model = sea_orm_entity::Entity::find()
+            .filter(sea_orm_entity::Column::UserId.eq(id.as_str()))
+            .one(&self.conn)
+            .await
+            .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
+
+        Ok(model.as_ref().map(Self::model_to_user))
+    }
+}
+
+/// 默认测试用户数据（仅用于数据库种子数据初始化）
 pub static DEFAULT_USERS: LazyLock<Vec<User>> = LazyLock::new(|| {
     vec![
         User::new(

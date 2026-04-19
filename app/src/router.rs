@@ -8,18 +8,11 @@ use my_jwt::jwt_utils::middleware::jwt_auth;
 use my_orm::init_db;
 use my_server_handle::graceful_stop;
 use salvo::{Router, affix_state, prelude::*};
-use sea_orm::DatabaseConnection;
 
 use crate::demo::{hello, login, profile};
 
 const MODEL: &str = include_str!("../casbin/rbac_with_pattern_model.conf");
 const POLICY: &str = include_str!("../casbin/rbac_with_pattern_policy.csv");
-
-#[derive(Debug, Clone)]
-struct AppState {
-    #[allow(dead_code)]
-    pub conn: DatabaseConnection,
-}
 
 pub async fn init_router() -> anyhow::Result<Router> {
     let casbin_hoop = create_casbin_hoop(MODEL, POLICY).await?;
@@ -35,11 +28,9 @@ pub async fn init_router() -> anyhow::Result<Router> {
         .await
         .context("Failed to initialize database schema")?;
 
-    let state = AppState { conn };
-
     let router = Router::new()
         .hoop(Logger::new())
-        .hoop(affix_state::inject(state))
+        .hoop(affix_state::inject(conn))
         .goal(hello)
         .hoop(max_concurrency(200))
         .hoop(Timeout::new(Duration::from_secs(5)))

@@ -1,24 +1,19 @@
-use std::sync::LazyLock;
-
-use my_demo::{
-    dto::LoginRequest,
-    facade::AuthFacade,
-    repository::{DEFAULT_USERS, InMemoryUserRepository},
-};
+use my_demo::{dto::LoginRequest, facade::AuthFacade, repository::DatabaseUserRepository};
 use my_ext::result::{render_error, render_success};
 use my_jwt::jwt_utils::get_claims;
 use salvo::{http::StatusCode, prelude::*};
-
-/// 认证门面实例
-static AUTH_FACADE: LazyLock<AuthFacade<InMemoryUserRepository>> = LazyLock::new(|| {
-    AuthFacade::new(InMemoryUserRepository::with_static_data(
-        DEFAULT_USERS.clone(),
-    ))
-});
+use sea_orm::DatabaseConnection;
 
 /// 登录端点
 #[endpoint]
-pub async fn login(req: &mut Request, res: &mut Response) {
+pub async fn login(req: &mut Request, res: &mut Response, depot: &Depot) {
+    let conn = match depot.obtain::<DatabaseConnection>() {
+        Ok(c) => c.clone(),
+        Err(_) => {
+            return render_error(res, "数据库连接不可用", StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    };
+
     let login_req = match req.parse_json::<LoginRequest>().await {
         Ok(r) => r,
         Err(e) => {
@@ -33,7 +28,10 @@ pub async fn login(req: &mut Request, res: &mut Response) {
     #[cfg(debug_assertions)]
     println!("{login_req:?}");
 
-    match AUTH_FACADE.login(&login_req) {
+    let repo = DatabaseUserRepository::new(conn);
+    let facade = AuthFacade::new(repo);
+
+    match facade.login(&login_req).await {
         Ok(Some(resp)) => render_success(res, &resp.token, "成功生成token"),
         Ok(None) => render_error(res, "Invalid credentials", StatusCode::UNAUTHORIZED),
         Err(_) => render_error(

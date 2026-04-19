@@ -23,8 +23,12 @@ impl<R: UserRepository> AuthFacade<R> {
     }
 
     /// 登录 - 返回 token
-    pub fn login(&self, req: &LoginRequest) -> Result<Option<LoginResponse>> {
-        let Some(user) = self.auth_service.authenticate(&req.username, &req.password) else {
+    pub async fn login(&self, req: &LoginRequest) -> Result<Option<LoginResponse>> {
+        let Some(user) = self
+            .auth_service
+            .authenticate(&req.username, &req.password)
+            .await?
+        else {
             return Ok(None);
         };
 

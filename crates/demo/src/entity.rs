@@ -61,6 +61,11 @@ impl User {
         &self.role
     }
 
+    #[must_use]
+    pub const fn password(&self) -> &Password {
+        &self.password
+    }
+
     /// 验证密码是否匹配
     #[must_use]
     pub fn verify_password(&self, candidate: &str) -> bool {

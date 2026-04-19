@@ -3,6 +3,7 @@ use std::time::Duration;
 use anyhow::Context;
 use my_casbin::rbac::create_casbin_hoop;
 use my_config::config::get_cfg;
+use my_demo::init_database_schema;
 use my_jwt::jwt_utils::middleware::jwt_auth;
 use my_orm::init_db;
 use my_server_handle::graceful_stop;
@@ -28,6 +29,12 @@ pub async fn init_router() -> anyhow::Result<Router> {
         "Failed to initialize database at: {}",
         cfg.database_cfg.db_url
     ))?;
+
+    // 初始化数据库架构（检查库、表是否存在，不存在则创建并插入默认数据）
+    init_database_schema(&conn)
+        .await
+        .context("Failed to initialize database schema")?;
+
     let state = AppState { conn };
 
     let router = Router::new()

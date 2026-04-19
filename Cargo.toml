@@ -78,6 +78,7 @@ sea-orm = { version = "^2.0.0-rc.38", features = [
   "with-uuid",
 ] }
 log = "0.4.29"
+uuid = { version = "1.23.1", features = ["v7", "serde", "fast-rng"] }
 
 [profile.dev]
 debug = true

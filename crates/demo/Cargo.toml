@@ -12,3 +12,7 @@ my_ext.workspace = true
 anyhow.workspace = true
 serde.workspace = true
 salvo.workspace = true
+sea-orm.workspace = true
+tokio.workspace = true
+log.workspace = true
+uuid.workspace = true

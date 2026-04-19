@@ -10,5 +10,5 @@ export RUSTFLAGS="
 
 cargo fmt --all
 # 运行 clippy
-cargo clippy --all --all-targets --all-features
+cargo clippy --workspace --all --all-targets --all-features --no-deps
 cargo test --workspace

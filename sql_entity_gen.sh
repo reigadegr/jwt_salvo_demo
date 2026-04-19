@@ -72,6 +72,8 @@ for i in "$dir"/*; do
 
     # 移除主键的 nullable 属性（处理 #[sea_orm(primary_key, ..., nullable, ...)]）
     sed -i 's/, nullable//g' "$i"
+    
+    sed -i 's/auto_increment = false/auto_increment = false, column_type = "Uuid"/g' "$i"
 
     # 添加 uuid crate 导入（如果使用了 Uuid 类型且还没有导入）
     if grep -q "Uuid" "$i" && ! grep -q "use uuid::Uuid;" "$i"; then

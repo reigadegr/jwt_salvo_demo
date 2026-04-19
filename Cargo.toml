@@ -65,7 +65,10 @@ toml = { version = "1.1.2", default-features = false, features = [
   "serde",
 ] }
 tracing = "0.1.44"
-tracing-subscriber = { version = "0.3.23", features = ["local-time"] }
+tracing-subscriber = { version = "0.3.23", features = [
+  "local-time",
+  "env-filter",
+] }
 serde_json = "1.0.149"
 obfstr = "0.4.4"
 sea-orm = { version = "^2.0.0-rc.38", features = [

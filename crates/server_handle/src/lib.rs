@@ -1,14 +1,16 @@
 pub mod shutdown_handle;
 
-use std::fmt;
+use std::{fmt, io::IsTerminal};
 
 use chrono::Local;
 use my_config::config::get_cfg;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
 pub use shutdown_handle::graceful_stop;
 use shutdown_handle::{init_handle, shutdown_signal};
-use tracing::Level;
-use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
+use tracing_subscriber::{
+    EnvFilter,
+    fmt::{format::Writer, time::FormatTime},
+};
 
 struct LoggerFormatter;
 
@@ -44,15 +46,15 @@ pub async fn use_http1() -> Server<TcpAcceptor> {
 }
 
 pub async fn init_server() -> Server<TcpAcceptor> {
-    let log_level = if cfg!(debug_assertions) {
-        Level::DEBUG
-    } else {
-        Level::INFO
-    };
+    // 初始化日志
+    let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("debug"));
+
+    let is_terminal = std::io::stdout().is_terminal();
 
     tracing_subscriber::fmt()
+        .with_env_filter(env_filter)
         .with_timer(LoggerFormatter)
-        .with_max_level(log_level)
+        .with_ansi(is_terminal)
         .init();
 
     let server = use_http1().await;

@@ -5,22 +5,20 @@ use tokio::time::Duration;
 fn prepare_sqlite_path(uri: &str) -> Result<()> {
     let path = uri.strip_prefix("sqlite://").unwrap_or(uri);
 
-    if path.starts_with("/") || path.starts_with(":") {
+    if path.starts_with('/') || path.starts_with(':') {
         return Ok(());
     }
 
     let db_path = std::path::Path::new(path);
 
-    if let Some(parent_dir) = db_path.parent() {
-        if !parent_dir.exists() {
-            std::fs::create_dir_all(parent_dir)
-                .context("Failed to create database directory")?;
-        }
+    if let Some(parent_dir) = db_path.parent()
+        && !parent_dir.exists()
+    {
+        std::fs::create_dir_all(parent_dir).context("Failed to create database directory")?;
     }
 
     if !db_path.exists() {
-        std::fs::File::create(db_path)
-            .context("Failed to create database file")?;
+        std::fs::File::create(db_path).context("Failed to create database file")?;
     }
 
     Ok(())

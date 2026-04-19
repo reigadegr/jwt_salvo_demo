@@ -7,11 +7,8 @@ use sea_orm::DatabaseConnection;
 /// 登录端点
 #[endpoint]
 pub async fn login(req: &mut Request, res: &mut Response, depot: &Depot) {
-    let conn = match depot.obtain::<DatabaseConnection>() {
-        Ok(c) => c.clone(),
-        Err(_) => {
-            return render_error(res, "数据库连接不可用", StatusCode::INTERNAL_SERVER_ERROR);
-        }
+    let Ok(conn) = depot.obtain::<DatabaseConnection>() else {
+        return render_error(res, "数据库连接不可用", StatusCode::INTERNAL_SERVER_ERROR);
     };
 
     let login_req = match req.parse_json::<LoginRequest>().await {

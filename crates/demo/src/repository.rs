@@ -53,13 +53,13 @@ impl UserRepository for InMemoryUserRepository {
 }
 
 /// 数据库用户仓储实现 - 基于 `SeaORM` 查询
-pub struct DatabaseUserRepository {
-    conn: DatabaseConnection,
+pub struct DatabaseUserRepository<'a> {
+    conn: &'a DatabaseConnection,
 }
 
-impl DatabaseUserRepository {
+impl<'a> DatabaseUserRepository<'a> {
     #[must_use]
-    pub const fn new(conn: DatabaseConnection) -> Self {
+    pub const fn new(conn: &'a DatabaseConnection) -> Self {
         Self { conn }
     }
 
@@ -73,11 +73,11 @@ impl DatabaseUserRepository {
     }
 }
 
-impl UserRepository for DatabaseUserRepository {
+impl UserRepository for DatabaseUserRepository<'_> {
     async fn find_by_username(&self, username: &str) -> Result<Option<User>> {
         let model = sea_orm_entity::Entity::find()
             .filter(sea_orm_entity::Column::Username.eq(username))
-            .one(&self.conn)
+            .one(self.conn)
             .await
             .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
 
@@ -87,7 +87,7 @@ impl UserRepository for DatabaseUserRepository {
     async fn find_by_id(&self, id: &UserId) -> Result<Option<User>> {
         let model = sea_orm_entity::Entity::find()
             .filter(sea_orm_entity::Column::UserId.eq(id.as_str()))
-            .one(&self.conn)
+            .one(self.conn)
             .await
             .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
 

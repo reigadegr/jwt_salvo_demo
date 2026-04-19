@@ -1,9 +1,10 @@
+use std::sync::OnceLock;
+
 use anyhow::anyhow;
-use once_cell::sync::OnceCell;
 use serde::Deserialize;
 use toml::from_str;
 
-static PROFILE: OnceCell<Config> = OnceCell::new();
+static PROFILE: OnceLock<Config> = OnceLock::new();
 
 pub fn init_config(app_config: &str) -> anyhow::Result<()> {
     let profile: Config = from_str(app_config)?;

@@ -1,11 +1,12 @@
+use std::sync::OnceLock;
+
 use anyhow::anyhow;
 use my_ext::result::render_success;
-use once_cell::sync::OnceCell;
 use salvo::{prelude::*, server::ServerHandle};
 use tokio::signal;
 use tracing::{error, info};
 
-static SERVER_HANDLE: OnceCell<ServerHandle> = OnceCell::new();
+static SERVER_HANDLE: OnceLock<ServerHandle> = OnceLock::new();
 
 pub fn init_handle(handle: ServerHandle) -> anyhow::Result<()> {
     SERVER_HANDLE

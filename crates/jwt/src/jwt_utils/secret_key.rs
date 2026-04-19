@@ -1,13 +1,14 @@
+use std::sync::OnceLock;
+
 use anyhow::{Context, anyhow};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{
     Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode, errors::Error,
 };
-use once_cell::sync::OnceCell;
 
 use crate::jwt_utils::models::Claims;
 
-static JWT_UTILS: OnceCell<SecretKey> = OnceCell::new();
+static JWT_UTILS: OnceLock<SecretKey> = OnceLock::new();
 
 pub fn init_jwt_utils(private_key: &[u8], public_key: &[u8]) -> anyhow::Result<()> {
     let encode_key = EncodingKey::from_ed_pem(private_key)

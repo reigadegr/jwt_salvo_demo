@@ -13,3 +13,8 @@ pub use repository::{DEFAULT_USERS, InMemoryUserRepository, UserRepository};
 
 pub mod db_init;
 pub use db_init::init_database_schema;
+
+// SeaORM 实体别名
+pub mod sea_orm_entity {
+    pub use my_entities::users::*;
+}

@@ -9,6 +9,7 @@ workspace = true
 [dependencies]
 my_jwt.workspace = true
 my_ext.workspace = true
+my_entities.workspace = true
 anyhow.workspace = true
 serde.workspace = true
 salvo.workspace = true

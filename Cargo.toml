@@ -7,6 +7,7 @@ members = [
   "crates/server_handle",
   "crates/ext",
   "crates/orm",
+  "crates/entities",
   "crates/demo",
 ]
 resolver = "3"
@@ -40,6 +41,7 @@ my_config = { path = "crates/config" }
 my_server_handle = { path = "crates/server_handle" }
 my_ext = { path = "crates/ext" }
 my_orm = { path = "crates/orm" }
+my_entities = { path = "crates/entities" }
 my_demo = { path = "crates/demo" }
 salvo = { version = "0.92.0", features = [
   "timeout",

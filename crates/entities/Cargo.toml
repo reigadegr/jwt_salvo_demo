@@ -1,0 +1,12 @@
+[package]
+name = "my_entities"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+sea-orm.workspace = true
+serde.workspace = true
+uuid.workspace = true

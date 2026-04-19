@@ -1,9 +1,12 @@
 use anyhow::{Context, Result};
-use log::{info, warn};
-use sea_orm::{ConnectionTrait, DatabaseConnection, DbBackend, Statement};
+use log::info;
+use sea_orm::{
+    ActiveModelTrait, ActiveValue::Set, ConnectionTrait, DatabaseConnection, DbBackend,
+    EntityTrait, PaginatorTrait, Schema, Statement,
+};
 use uuid::Uuid;
 
-use crate::repository::DEFAULT_USERS;
+use crate::{repository::DEFAULT_USERS, sea_orm_entity};
 
 /// 初始化数据库架构
 ///
@@ -11,11 +14,8 @@ use crate::repository::DEFAULT_USERS;
 pub async fn init_database_schema(conn: &DatabaseConnection) -> Result<()> {
     info!("开始初始化数据库架构...");
 
-    // 获取数据库类型
-    let db_backend = conn.get_database_backend();
-
-    // 检查并创建用户表
-    ensure_users_table_exists(conn, db_backend).await?;
+    // 确保用户表存在
+    ensure_users_table_exists(conn).await?;
 
     // 检查并插入默认数据
     ensure_default_data_exists(conn).await?;
@@ -25,7 +25,10 @@ pub async fn init_database_schema(conn: &DatabaseConnection) -> Result<()> {
 }
 
 /// 确保用户表存在，不存在则创建
-async fn ensure_users_table_exists(conn: &DatabaseConnection, db_backend: DbBackend) -> Result<()> {
+///
+/// 使用 `SeaORM` 的 `Schema::create_table_from_entity` 方法
+/// 自动生成跨数据库兼容的 CREATE TABLE 语句
+async fn ensure_users_table_exists(conn: &DatabaseConnection) -> Result<()> {
     // 检查表是否存在
     let table_exists = check_table_exists(conn, "users").await?;
 
@@ -36,68 +39,20 @@ async fn ensure_users_table_exists(conn: &DatabaseConnection, db_backend: DbBack
 
     info!("用户表不存在，开始创建...");
 
-    // 创建用户表的 SQL
-    let create_table_sql = match db_backend {
-        DbBackend::Sqlite => {
-            // SQLite 使用 UUID v7 作为主键
-            r"
-            CREATE TABLE IF NOT EXISTS users (
-                id TEXT PRIMARY KEY,
-                user_id TEXT NOT NULL UNIQUE,
-                username TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL,
-                role TEXT NOT NULL
-            );
-            CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
-            "
-        }
-        DbBackend::MySql => {
-            // MySQL 版本 - 使用 UUID v7 作为主键
-            r"
-            CREATE TABLE IF NOT EXISTS users (
-                id CHAR(36) PRIMARY KEY,
-                user_id VARCHAR(64) NOT NULL UNIQUE,
-                username VARCHAR(64) NOT NULL UNIQUE,
-                password VARCHAR(128) NOT NULL,
-                role VARCHAR(64) NOT NULL,
-                INDEX idx_users_username (username)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-            "
-        }
-        DbBackend::Postgres => {
-            // PostgreSQL 版本 - 使用 UUID v7 作为主键
-            r"
-            CREATE TABLE IF NOT EXISTS users (
-                id UUID PRIMARY KEY,
-                user_id VARCHAR(64) NOT NULL UNIQUE,
-                username VARCHAR(64) NOT NULL UNIQUE,
-                password VARCHAR(128) NOT NULL,
-                role VARCHAR(64) NOT NULL
-            );
-            CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
-            "
-        }
-        _ => {
-            warn!("未知的数据库类型，使用通用 SQL");
-            r"
-            CREATE TABLE IF NOT EXISTS users (
-                id CHAR(36) PRIMARY KEY,
-                user_id VARCHAR(64) NOT NULL UNIQUE,
-                username VARCHAR(64) NOT NULL UNIQUE,
-                password VARCHAR(128) NOT NULL,
-                role VARCHAR(64) NOT NULL
-            )
-            "
-        }
-    };
+    // 使用 SeaORM Schema 从 Entity 自动生成 CREATE TABLE 语句
+    // UUID 主键会自动映射为：
+    // - MySQL: binary(16)
+    // - PostgreSQL: uuid
+    // - SQLite: uuid_text (16字节 BLOB)
+    let db_backend = conn.get_database_backend();
+    let schema = Schema::new(db_backend);
+    let mut create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
+    create_table.if_not_exists();
 
-    // 执行创建表语句 - 使用 execute_raw 方法
-    conn.execute_raw(Statement::from_string(
-        db_backend,
-        create_table_sql.to_string(),
-    ))
-    .await
-    .context("创建用户表失败")?;
+    // 执行创建表语句
+    conn.execute(&create_table)
+        .await
+        .context("创建用户表失败")?;
 
     info!("用户表创建成功");
     Ok(())
@@ -112,7 +67,6 @@ async fn check_table_exists(conn: &DatabaseConnection, table_name: &str) -> Resu
             format!("SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
         }
         DbBackend::MySql => {
-            // MySQL 需要数据库名，这里用简化的方式
             format!("SHOW TABLES LIKE '{table_name}'")
         }
         DbBackend::Postgres => {
@@ -138,16 +92,11 @@ async fn check_table_exists(conn: &DatabaseConnection, table_name: &str) -> Resu
 async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
     info!("检查默认用户数据...");
 
-    let db_backend = conn.get_database_backend();
-
-    // 检查是否已有数据
-    let count_sql = "SELECT COUNT(*) as count FROM users";
-    let result = conn
-        .query_one_raw(Statement::from_string(db_backend, count_sql))
+    // 使用 SeaORM Entity 查询用户数量
+    let count = sea_orm_entity::Entity::find()
+        .count(conn)
         .await
         .context("查询用户数量失败")?;
-
-    let count: i64 = result.map_or(0, |r| r.try_get::<i64>("", "count").unwrap_or(0));
 
     if count > 0 {
         info!("用户表已有 {count} 条数据，跳过默认数据插入");
@@ -161,16 +110,17 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
         // 使用 UUID v7 作为主键
         let id = Uuid::now_v7();
 
-        let insert_sql = format!(
-            "INSERT INTO users (id, user_id, username, password, role) VALUES ('{}', '{}', '{}', '{}', '{}')",
-            id,
-            user.id().as_str(),
-            user.username().as_str(),
-            user.password().as_str(),
-            user.role().as_str()
-        );
+        // 使用 SeaORM ActiveModel 插入数据
+        let new_user = sea_orm_entity::ActiveModel {
+            id: Set(id),
+            user_id: Set(user.id().as_str().to_string()),
+            username: Set(user.username().as_str().to_string()),
+            password: Set(user.password().as_str().to_string()),
+            role: Set(user.role().as_str().to_string()),
+        };
 
-        conn.execute_raw(Statement::from_string(db_backend, insert_sql.clone()))
+        new_user
+            .insert(conn)
             .await
             .with_context(|| format!("插入用户 {} 失败", user.username().as_str()))?;
 
@@ -183,11 +133,67 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
+    use sea_orm::{DbBackend, Schema};
+
     use super::*;
+    use crate::sea_orm_entity;
 
     #[test]
     fn test_default_users_exist() {
         assert!(!DEFAULT_USERS.is_empty());
         assert_eq!(DEFAULT_USERS.len(), 2);
+    }
+
+    #[test]
+    fn test_uuid_v7_generation() {
+        let id = Uuid::now_v7();
+        let hex = id.as_simple().to_string();
+        assert!(hex.starts_with('0'), "UUID v7 hex: {hex}");
+        println!("UUID v7: {id}");
+    }
+
+    #[test]
+    fn test_schema_sqlite_generates_uuid_text() {
+        let backend = DbBackend::Sqlite;
+        let schema = Schema::new(backend);
+        let create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
+        let sql = backend.build(&create_table).sql;
+
+        // SQLite 应该生成 uuid_text 类型
+        assert!(
+            sql.contains("uuid_text") || sql.contains("BLOB"),
+            "SQLite SQL should contain uuid_text or BLOB: {sql}"
+        );
+        println!("SQLite CREATE TABLE:\n{sql}");
+    }
+
+    #[test]
+    fn test_schema_mysql_generates_binary16() {
+        let backend = DbBackend::MySql;
+        let schema = Schema::new(backend);
+        let create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
+        let sql = backend.build(&create_table).sql;
+
+        // MySQL 应该生成 binary(16) 类型
+        assert!(
+            sql.contains("binary(16)") || sql.contains("BINARY(16)"),
+            "MySQL SQL should contain binary(16): {sql}"
+        );
+        println!("MySQL CREATE TABLE:\n{sql}");
+    }
+
+    #[test]
+    fn test_schema_postgres_generates_uuid() {
+        let backend = DbBackend::Postgres;
+        let schema = Schema::new(backend);
+        let create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
+        let sql = backend.build(&create_table).sql;
+
+        // PostgreSQL 应该生成 uuid 类型
+        assert!(
+            sql.contains("\"id\" uuid") || sql.contains("\"id\" UUID"),
+            "PostgreSQL SQL should contain uuid type: {sql}"
+        );
+        println!("PostgreSQL CREATE TABLE:\n{sql}");
     }
 }

@@ -9,13 +9,11 @@ use uuid::Uuid;
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false, column_type = "Uuid")]
     pub id: Uuid,
-    #[sea_orm(column_type = "Text", unique)]
+    #[sea_orm(unique)]
     pub user_id: String,
-    #[sea_orm(column_type = "Text", unique)]
+    #[sea_orm(unique)]
     pub username: String,
-    #[sea_orm(column_type = "Text")]
     pub password: String,
-    #[sea_orm(column_type = "Text")]
     pub role: String,
 }
 

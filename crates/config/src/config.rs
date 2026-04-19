@@ -22,10 +22,16 @@ pub fn get_cfg() -> anyhow::Result<&'static Config> {
 #[derive(Deserialize)]
 pub struct Config {
     pub client_cfg: ClientCfg,
+    pub database_cfg: DatabaseCfg,
 }
 
 #[derive(Deserialize, Eq, Hash, PartialEq)]
 pub struct ClientCfg {
     pub service_ip: String,
     pub service_port: i32,
+}
+
+#[derive(Deserialize)]
+pub struct DatabaseCfg {
+    pub db_url: String,
 }

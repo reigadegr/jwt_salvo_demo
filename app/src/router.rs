@@ -2,10 +2,10 @@ use std::time::Duration;
 
 use anyhow::Context;
 use my_casbin::rbac::create_casbin_hoop;
+use my_config::config::get_cfg;
 use my_jwt::jwt_utils::middleware::jwt_auth;
 use my_orm::init_db;
 use my_server_handle::graceful_stop;
-use obfstr::obfstr;
 use salvo::{Router, affix_state, prelude::*};
 use sea_orm::DatabaseConnection;
 
@@ -23,9 +23,11 @@ struct AppState {
 pub async fn init_router() -> anyhow::Result<Router> {
     let casbin_hoop = create_casbin_hoop(MODEL, POLICY).await?;
 
-    let conn = init_db(obfstr!("postgres://user:pass@127.0.0.1:5432/db"))
-        .await
-        .context("Failed to initialize database")?;
+    let cfg = get_cfg()?;
+    let conn = init_db(&cfg.database_cfg.db_url).await.context(format!(
+        "Failed to initialize database at: {}",
+        cfg.database_cfg.db_url
+    ))?;
     let state = AppState { conn };
 
     let router = Router::new()

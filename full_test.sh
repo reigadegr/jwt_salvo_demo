@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BASE_URL="http://127.0.0.1:3000"
+BASE_URL="http://127.0.0.1:6789"
 echo -e "\033[32m=== JWT认证一键测试脚本 ===\033[0m"
 echo "服务地址: $BASE_URL"
 

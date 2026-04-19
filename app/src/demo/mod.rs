@@ -1,14 +1,13 @@
 use std::sync::LazyLock;
 
-use my_ext::result::{render_error, render_success};
-use my_jwt::jwt_utils::get_claims;
-use salvo::{http::StatusCode, prelude::*};
-
 use my_demo::{
     dto::LoginRequest,
     facade::AuthFacade,
     repository::{DEFAULT_USERS, InMemoryUserRepository},
 };
+use my_ext::result::{render_error, render_success};
+use my_jwt::jwt_utils::get_claims;
+use salvo::{http::StatusCode, prelude::*};
 
 /// 认证门面实例
 static AUTH_FACADE: LazyLock<AuthFacade<InMemoryUserRepository>> = LazyLock::new(|| {

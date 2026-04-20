@@ -33,7 +33,7 @@ pub async fn create_casbin_hoop(
         );
 
         Ok(Some(CasbinVals {
-            subject: auth.role.clone().to_string(),
+            subject: auth.role.clone(),
             domain: None,
         }))
     }))

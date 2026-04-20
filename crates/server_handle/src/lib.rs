@@ -33,7 +33,7 @@ pub async fn use_http1() -> Server<TcpAcceptor> {
     let listen_addr = format!("{ip}:{port}");
     #[cfg(debug_assertions)]
     println!(
-        "📖 Open API Page: http://{}/scalar",
+        "📖 Open API Page: http://{}/docs",
         listen_addr.replace("0.0.0.0", "127.0.0.1")
     );
 

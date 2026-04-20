@@ -28,7 +28,7 @@ pub async fn init_router() -> anyhow::Result<Router> {
         .await
         .context("Failed to initialize database schema")?;
 
-    let mut router = Router::new()
+    let router = Router::new()
         .hoop(Logger::new())
         .hoop(affix_state::inject(conn))
         .goal(hello)
@@ -43,15 +43,17 @@ pub async fn init_router() -> anyhow::Result<Router> {
                 .push(Router::with_path("stop/{secs}").get(graceful_stop)),
         );
 
-    // 在 debug 模式下添加 OpenAPI 文档
+    // debug 模式下添加 OpenAPI 文档
     #[cfg(debug_assertions)]
     {
         use salvo::oapi::swagger_ui::SwaggerUi;
         let doc = OpenApi::new("salvo web api", "0.0.1").merge_router(&router);
-        router = router
+        let router = router
             .unshift(doc.into_router("/api-doc/openapi.json"))
             .unshift(SwaggerUi::new("/api-doc/openapi.json").into_router("docs"));
+        Ok(router)
     }
 
+    #[cfg(not(debug_assertions))]
     Ok(router)
 }

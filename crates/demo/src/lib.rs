@@ -17,13 +17,14 @@ pub mod facade {
 }
 
 // 顶层常用导出
-pub use application::dto::{LoginRequest, LoginResponse, UserProfile};
-pub use application::facade::{get_profile, login};
+pub use application::{
+    dto::{LoginRequest, LoginResponse, UserProfile},
+    facade::{get_profile, login},
+};
 pub use domain::entity::{User, UserId};
-pub use infrastructure::persistence::{find_user_by_id, find_user_by_username};
-
 // db_init
 pub use infrastructure::db_init::init_database_schema;
+pub use infrastructure::persistence::{find_user_by_id, find_user_by_username};
 
 // SeaORM 实体别名
 pub mod sea_orm_entity {

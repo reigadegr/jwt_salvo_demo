@@ -6,8 +6,10 @@ use sea_orm::{
 };
 use uuid::Uuid;
 
-use crate::infrastructure::persistence::{DEFAULT_USER_RAW_DATA, DEFAULT_USERS};
-use crate::sea_orm_entity;
+use crate::{
+    infrastructure::persistence::{DEFAULT_USER_RAW_DATA, DEFAULT_USERS},
+    sea_orm_entity,
+};
 
 /// 初始化数据库架构
 ///

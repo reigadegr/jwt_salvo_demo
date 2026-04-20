@@ -1,8 +1,7 @@
 use anyhow::Result;
 use sea_orm::DatabaseConnection;
 
-use crate::domain::entity::User;
-use crate::infrastructure::persistence::find_user_by_username;
+use crate::{domain::entity::User, infrastructure::persistence::find_user_by_username};
 
 /// 认证用户 — 返回认证成功的用户，失败返回 None
 pub async fn authenticate(

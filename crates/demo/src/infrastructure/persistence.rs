@@ -3,9 +3,13 @@ use std::sync::LazyLock;
 use anyhow::Result;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
-use crate::domain::entity::{User, UserId};
-use crate::domain::value_object::{Password, Role, Username};
-use crate::sea_orm_entity;
+use crate::{
+    domain::{
+        entity::{User, UserId},
+        value_object::{Password, Role, Username},
+    },
+    sea_orm_entity,
+};
 
 /// 根据用户名查找用户 — 数据库查询
 pub async fn find_user_by_username(

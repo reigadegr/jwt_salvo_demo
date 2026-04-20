@@ -1,8 +1,10 @@
 use anyhow::Result;
 use sea_orm::DatabaseConnection;
 
-use crate::application::dto::{LoginRequest, LoginResponse, UserProfile};
-use crate::domain::{entity::User, service::authenticate};
+use crate::{
+    application::dto::{LoginRequest, LoginResponse, UserProfile},
+    domain::{entity::User, service::authenticate},
+};
 
 /// 登录用例 — 返回 token
 pub async fn login(conn: &DatabaseConnection, req: &LoginRequest) -> Result<Option<LoginResponse>> {

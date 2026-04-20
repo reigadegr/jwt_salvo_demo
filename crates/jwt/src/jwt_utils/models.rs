@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -6,7 +8,7 @@ use serde::{Deserialize, Serialize};
 // exp: 过期时间
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub role: String,
+    pub role: Arc<str>,
     pub username: String,
     pub exp: i64,
 }
@@ -15,7 +17,7 @@ impl Claims {
     #[must_use]
     pub fn new(role: &str, username: &str, exp: DateTime<Utc>) -> Self {
         Self {
-            role: role.to_owned(),
+            role: Arc::from(role),
             username: username.to_owned(),
             exp: exp.timestamp(),
         }

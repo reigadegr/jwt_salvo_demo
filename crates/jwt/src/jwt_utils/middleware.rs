@@ -31,7 +31,7 @@ pub async fn jwt_auth(
     };
 
     if let Ok(claims) = jwt_utils.validate_token(jwt_token) {
-        // 调试：打印当前用户信息
+        #[cfg(debug_assertions)]
         println!(
             "🔐 JWT Auth - username: {}, role: {}",
             claims.username, claims.role

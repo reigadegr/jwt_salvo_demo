@@ -24,7 +24,7 @@ pub async fn create_casbin_hoop(
             return Err(StatusError::bad_request());
         };
 
-        // 调试：打印 Casbin 检查的路径和方法
+        #[cfg(debug_assertions)]
         println!(
             "🔒 Casbin Check - role: {}, path: {}, method: {}",
             auth.role,
@@ -33,7 +33,7 @@ pub async fn create_casbin_hoop(
         );
 
         Ok(Some(CasbinVals {
-            subject: auth.role.clone(),
+            subject: auth.role.clone().to_string(),
             domain: None,
         }))
     }))

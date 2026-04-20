@@ -1,82 +1,30 @@
 use anyhow::{Context, Result};
 use log::info;
-use sea_orm::{
-    ActiveValue::Set, ConnectionTrait, DatabaseConnection, DbBackend, EntityTrait, PaginatorTrait,
-    Schema, Statement,
-};
+use my_entities::{prelude::Users, users::ActiveModel};
+use my_schema::ensure_table_exists;
+use sea_orm::{ActiveValue::Set, DatabaseConnection, EntityTrait, PaginatorTrait};
 use uuid::Uuid;
 
-use crate::{infrastructure::persistence::DEFAULT_USER_RAW_DATA, sea_orm_entity};
+use crate::infrastructure::persistence::DEFAULT_USER_RAW_DATA;
 
-/// 初始化数据库架构
+/// 初始化用户数据库架构
 ///
-/// 检查数据库和表是否存在，如果不存在则创建表并插入默认数据
+/// 检查用户表是否存在，不存在则创建表并插入默认数据
 pub async fn init_database_schema(conn: &DatabaseConnection) -> Result<()> {
-    info!("开始初始化数据库架构...");
+    info!("开始初始化用户数据库架构...");
 
-    ensure_users_table_exists(conn).await?;
+    ensure_table_exists::<Users>(conn).await?;
     ensure_default_data_exists(conn).await?;
 
-    info!("数据库架构初始化完成");
+    info!("用户数据库架构初始化完成");
     Ok(())
-}
-
-/// 确保用户表存在，不存在则创建
-async fn ensure_users_table_exists(conn: &DatabaseConnection) -> Result<()> {
-    let table_exists = check_table_exists(conn, "users").await?;
-
-    if table_exists {
-        info!("用户表已存在，跳过创建");
-        return Ok(());
-    }
-
-    info!("用户表不存在，开始创建...");
-
-    let db_backend = conn.get_database_backend();
-    let schema = Schema::new(db_backend);
-    let mut create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
-    create_table.if_not_exists();
-
-    conn.execute(&create_table)
-        .await
-        .context("创建用户表失败")?;
-
-    info!("用户表创建成功");
-    Ok(())
-}
-
-/// 检查表是否存在
-async fn check_table_exists(conn: &DatabaseConnection, table_name: &str) -> Result<bool> {
-    let db_backend = conn.get_database_backend();
-
-    let check_sql = match db_backend {
-        DbBackend::Sqlite => {
-            format!("SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
-        }
-        DbBackend::MySql => {
-            format!("SHOW TABLES LIKE '{table_name}'")
-        }
-        DbBackend::Postgres => {
-            format!(
-                "SELECT table_name FROM information_schema.tables WHERE table_name = '{table_name}'"
-            )
-        }
-        _ => return Ok(true),
-    };
-
-    let result = conn
-        .query_one_raw(Statement::from_string(db_backend, check_sql))
-        .await
-        .context("检查表是否存在时出错")?;
-
-    Ok(result.is_some())
 }
 
 /// 确保默认数据存在，不存在则插入
 async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
     info!("检查默认用户数据...");
 
-    let count = sea_orm_entity::Entity::find()
+    let count = Users::find()
         .count(conn)
         .await
         .context("查询用户数量失败")?;
@@ -90,7 +38,7 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
 
     let users: Vec<_> = DEFAULT_USER_RAW_DATA
         .iter()
-        .map(|raw| sea_orm_entity::ActiveModel {
+        .map(|raw| ActiveModel {
             id: Set(Uuid::now_v7()),
             user_id: Set(raw.user_id.to_string()),
             username: Set(raw.username.to_string()),
@@ -99,7 +47,7 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
         })
         .collect();
 
-    sea_orm_entity::Entity::insert_many(users)
+    Users::insert_many(users)
         .exec(conn)
         .await
         .context("批量插入默认用户数据失败")?;
@@ -116,7 +64,6 @@ mod tests {
     use sea_orm::{DbBackend, Schema};
 
     use super::*;
-    use crate::sea_orm_entity;
 
     #[test]
     fn test_default_users_exist() {
@@ -136,7 +83,7 @@ mod tests {
     fn test_schema_sqlite_generates_uuid_text() {
         let backend = DbBackend::Sqlite;
         let schema = Schema::new(backend);
-        let create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
+        let create_table = schema.create_table_from_entity(Users);
         let sql = backend.build(&create_table).sql;
 
         assert!(
@@ -150,7 +97,7 @@ mod tests {
     fn test_schema_mysql_generates_binary16() {
         let backend = DbBackend::MySql;
         let schema = Schema::new(backend);
-        let create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
+        let create_table = schema.create_table_from_entity(Users);
         let sql = backend.build(&create_table).sql;
 
         assert!(
@@ -164,7 +111,7 @@ mod tests {
     fn test_schema_postgres_generates_uuid() {
         let backend = DbBackend::Postgres;
         let schema = Schema::new(backend);
-        let create_table = schema.create_table_from_entity(sea_orm_entity::Entity);
+        let create_table = schema.create_table_from_entity(Users);
         let sql = backend.build(&create_table).sql;
 
         assert!(

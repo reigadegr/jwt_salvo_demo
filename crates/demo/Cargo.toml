@@ -10,6 +10,7 @@ workspace = true
 my_jwt.workspace = true
 my_ext.workspace = true
 my_entities.workspace = true
+my_schema.workspace = true
 anyhow.workspace = true
 serde.workspace = true
 salvo.workspace = true

@@ -1,14 +1,15 @@
 use std::sync::LazyLock;
 
 use anyhow::Result;
+use my_entities::{
+    prelude::Users,
+    users::{Column, Model},
+};
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
-use crate::{
-    domain::{
-        entity::{User, UserId},
-        value_object::{Password, Role, Username},
-    },
-    sea_orm_entity,
+use crate::domain::{
+    entity::{User, UserId},
+    value_object::{Password, Role, Username},
 };
 
 /// 根据用户名查找用户 — 数据库查询
@@ -16,8 +17,8 @@ pub async fn find_user_by_username(
     conn: &DatabaseConnection,
     username: &str,
 ) -> Result<Option<User>> {
-    let model = sea_orm_entity::Entity::find()
-        .filter(sea_orm_entity::Column::Username.eq(username))
+    let model = Users::find()
+        .filter(Column::Username.eq(username))
         .one(conn)
         .await
         .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
@@ -27,8 +28,8 @@ pub async fn find_user_by_username(
 
 /// 根据 ID 查找用户 — 数据库查询
 pub async fn find_user_by_id(conn: &DatabaseConnection, id: &UserId) -> Result<Option<User>> {
-    let model = sea_orm_entity::Entity::find()
-        .filter(sea_orm_entity::Column::UserId.eq(id.as_str()))
+    let model = Users::find()
+        .filter(Column::UserId.eq(id.as_str()))
         .one(conn)
         .await
         .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
@@ -37,7 +38,7 @@ pub async fn find_user_by_id(conn: &DatabaseConnection, id: &UserId) -> Result<O
 }
 
 /// 数据映射器 — `SeaORM` Model → 领域 User
-fn model_to_user(model: &sea_orm_entity::Model) -> User {
+fn model_to_user(model: &Model) -> User {
     User::new(
         UserId::new(model.user_id.as_str()),
         Username::new_unchecked(model.username.as_str()),

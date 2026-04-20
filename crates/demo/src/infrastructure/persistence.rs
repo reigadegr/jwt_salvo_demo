@@ -46,28 +46,7 @@ fn model_to_user(model: &sea_orm_entity::Model) -> User {
     )
 }
 
-/// 默认测试用户数据（仅用于数据库种子数据初始化）
-pub static DEFAULT_USERS: LazyLock<Vec<User>> = LazyLock::new(|| {
-    vec![
-        User::new(
-            UserId::new("1"),
-            Username::new("user1"),
-            Password::new("password1"),
-            Role::new("token-admin"),
-        ),
-        User::new(
-            UserId::new("2"),
-            Username::new("user2"),
-            Password::new("password2"),
-            Role::new("yz666"),
-        ),
-    ]
-});
-
 /// 默认用户原始数据 — 用于数据库种子插入
-///
-/// 聚合根不暴露密码，但基础设施层需要完整字段写入数据库。
-/// 通过此结构体将领域对象与持久化细节解耦。
 pub static DEFAULT_USER_RAW_DATA: LazyLock<Vec<RawUserData>> = LazyLock::new(|| {
     vec![
         RawUserData {

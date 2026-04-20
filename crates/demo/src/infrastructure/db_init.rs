@@ -6,10 +6,7 @@ use sea_orm::{
 };
 use uuid::Uuid;
 
-use crate::{
-    infrastructure::persistence::{DEFAULT_USER_RAW_DATA, DEFAULT_USERS},
-    sea_orm_entity,
-};
+use crate::{infrastructure::persistence::DEFAULT_USER_RAW_DATA, sea_orm_entity};
 
 /// 初始化数据库架构
 ///
@@ -110,7 +107,10 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
         info!("已插入默认用户: {} (id: {})", raw.username, id);
     }
 
-    info!("默认用户数据插入完成，共 {} 条", DEFAULT_USERS.len());
+    info!(
+        "默认用户数据插入完成，共 {} 条",
+        DEFAULT_USER_RAW_DATA.len()
+    );
     Ok(())
 }
 
@@ -123,8 +123,8 @@ mod tests {
 
     #[test]
     fn test_default_users_exist() {
-        assert!(!DEFAULT_USERS.is_empty());
-        assert_eq!(DEFAULT_USERS.len(), 2);
+        assert!(!DEFAULT_USER_RAW_DATA.is_empty());
+        assert_eq!(DEFAULT_USER_RAW_DATA.len(), 2);
     }
 
     #[test]

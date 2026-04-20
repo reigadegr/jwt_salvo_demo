@@ -1,13 +1,20 @@
-use my_demo::{dto::LoginRequest, facade::AuthFacade, repository::DatabaseUserRepository};
+use my_demo::dto::LoginRequest;
 use my_ext::result::{render_error, render_success};
 use my_jwt::jwt_utils::get_claims;
 use salvo::{http::StatusCode, prelude::*};
 use sea_orm::DatabaseConnection;
 
+/// 从 Depot 获取数据库连接
+fn get_db(depot: &Depot) -> Result<&DatabaseConnection, StatusCode> {
+    depot
+        .obtain::<DatabaseConnection>()
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+}
+
 /// 登录端点
 #[endpoint]
 pub async fn login(req: &mut Request, res: &mut Response, depot: &Depot) {
-    let Ok(conn) = depot.obtain::<DatabaseConnection>() else {
+    let Ok(db) = get_db(depot) else {
         return render_error(res, "数据库连接不可用", StatusCode::INTERNAL_SERVER_ERROR);
     };
 
@@ -25,10 +32,7 @@ pub async fn login(req: &mut Request, res: &mut Response, depot: &Depot) {
     #[cfg(debug_assertions)]
     println!("{login_req:?}");
 
-    let repo = DatabaseUserRepository::new(conn);
-    let facade = AuthFacade::new(repo);
-
-    match facade.login(&login_req).await {
+    match my_demo::facade::login(db, &login_req).await {
         Ok(Some(resp)) => render_success(res, &resp.token, "成功生成token"),
         Ok(None) => render_error(res, "Invalid credentials", StatusCode::UNAUTHORIZED),
         Err(_) => render_error(

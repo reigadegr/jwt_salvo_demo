@@ -1,30 +1,21 @@
 use anyhow::Result;
+use sea_orm::DatabaseConnection;
 
-use crate::domain::{entity::User, repository::UserRepository};
+use crate::domain::entity::User;
+use crate::infrastructure::persistence::find_user_by_username;
 
-/// 认证领域服务 — 纯领域逻辑
-///
-/// Domain Service: 无状态的领域操作，不自然属于任何实体或值对象。
-/// 不持有状态，不依赖基础设施。
-pub struct AuthService<R: UserRepository> {
-    user_repo: R,
-}
-
-impl<R: UserRepository> AuthService<R> {
-    #[must_use]
-    pub const fn new(user_repo: R) -> Self {
-        Self { user_repo }
-    }
-
-    /// 认证用户 — 返回认证成功的用户，失败返回 None
-    pub async fn authenticate(&self, username: &str, password: &str) -> Result<Option<User>> {
-        let Some(user) = self.user_repo.find_by_username(username).await? else {
-            return Ok(None);
-        };
-        if user.verify_password(password) {
-            Ok(Some(user))
-        } else {
-            Ok(None)
-        }
+/// 认证用户 — 返回认证成功的用户，失败返回 None
+pub async fn authenticate(
+    conn: &DatabaseConnection,
+    username: &str,
+    password: &str,
+) -> Result<Option<User>> {
+    let Some(user) = find_user_by_username(conn, username).await? else {
+        return Ok(None);
+    };
+    if user.verify_password(password) {
+        Ok(Some(user))
+    } else {
+        Ok(None)
     }
 }

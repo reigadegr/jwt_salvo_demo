@@ -6,28 +6,21 @@ pub mod infrastructure;
 
 // ── 重导出：保持外部 API 兼容 ──
 
-// DTO（app/src/demo/mod.rs 使用 `my_demo::dto::LoginRequest`）
+// DTO
 pub mod dto {
     pub use crate::application::dto::{LoginRequest, LoginResponse, UserProfile};
 }
 
-// Facade（app/src/demo/mod.rs 使用 `my_demo::facade::AuthFacade`）
+// Facade
 pub mod facade {
-    pub use crate::application::facade::AuthFacade;
-}
-
-// Repository（app/src/demo/mod.rs 使用 `my_demo::repository::DatabaseUserRepository`）
-pub mod repository {
-    pub use crate::domain::repository::UserRepository;
-    pub use crate::infrastructure::persistence::{DatabaseUserRepository, InMemoryUserRepository};
+    pub use crate::application::facade::{get_profile, login};
 }
 
 // 顶层常用导出
 pub use application::dto::{LoginRequest, LoginResponse, UserProfile};
-pub use application::facade::AuthFacade;
+pub use application::facade::{get_profile, login};
 pub use domain::entity::{User, UserId};
-pub use domain::repository::UserRepository;
-pub use infrastructure::persistence::{DatabaseUserRepository, InMemoryUserRepository};
+pub use infrastructure::persistence::{find_user_by_id, find_user_by_username};
 
 // db_init
 pub use infrastructure::db_init::init_database_schema;

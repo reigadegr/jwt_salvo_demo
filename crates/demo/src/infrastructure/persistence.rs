@@ -1,89 +1,45 @@
-use std::{collections::HashMap, sync::LazyLock};
+use std::sync::LazyLock;
 
 use anyhow::Result;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 use crate::domain::entity::{User, UserId};
-use crate::domain::repository::UserRepository;
 use crate::domain::value_object::{Password, Role, Username};
 use crate::sea_orm_entity;
 
-/// 内存用户仓储实现 — 用于测试/演示
-#[derive(Debug, Default)]
-pub struct InMemoryUserRepository {
-    users: HashMap<String, User>,
+/// 根据用户名查找用户 — 数据库查询
+pub async fn find_user_by_username(
+    conn: &DatabaseConnection,
+    username: &str,
+) -> Result<Option<User>> {
+    let model = sea_orm_entity::Entity::find()
+        .filter(sea_orm_entity::Column::Username.eq(username))
+        .one(conn)
+        .await
+        .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
+
+    Ok(model.as_ref().map(model_to_user))
 }
 
-impl InMemoryUserRepository {
-    #[must_use]
-    pub fn new() -> Self {
-        Self::default()
-    }
+/// 根据 ID 查找用户 — 数据库查询
+pub async fn find_user_by_id(conn: &DatabaseConnection, id: &UserId) -> Result<Option<User>> {
+    let model = sea_orm_entity::Entity::find()
+        .filter(sea_orm_entity::Column::UserId.eq(id.as_str()))
+        .one(conn)
+        .await
+        .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
 
-    /// 从静态数据初始化
-    #[must_use]
-    pub fn with_static_data(users: Vec<User>) -> Self {
-        let mut repo = Self::new();
-        for user in users {
-            repo.users
-                .insert(user.username().as_str().to_string(), user);
-        }
-        repo
-    }
+    Ok(model.as_ref().map(model_to_user))
 }
 
-impl UserRepository for InMemoryUserRepository {
-    async fn find_by_username(&self, username: &str) -> Result<Option<User>> {
-        Ok(self.users.get(username).cloned())
-    }
-
-    async fn find_by_id(&self, id: &UserId) -> Result<Option<User>> {
-        Ok(self.users.values().find(|u| u.id() == id).cloned())
-    }
-}
-
-/// 数据库用户仓储实现 — 基于 `SeaORM` 查询
-pub struct DatabaseUserRepository<'a> {
-    conn: &'a DatabaseConnection,
-}
-
-impl<'a> DatabaseUserRepository<'a> {
-    #[must_use]
-    pub const fn new(conn: &'a DatabaseConnection) -> Self {
-        Self { conn }
-    }
-
-    /// 数据映射器 — `SeaORM` Model → 领域 User
-    fn model_to_user(model: &sea_orm_entity::Model) -> User {
-        User::new(
-            UserId::new(model.user_id.as_str()),
-            Username::new_unchecked(model.username.as_str()),
-            Password::new_unchecked(model.password.as_str()),
-            Role::new_unchecked(model.role.as_str()),
-        )
-    }
-}
-
-impl UserRepository for DatabaseUserRepository<'_> {
-    async fn find_by_username(&self, username: &str) -> Result<Option<User>> {
-        let model = sea_orm_entity::Entity::find()
-            .filter(sea_orm_entity::Column::Username.eq(username))
-            .one(self.conn)
-            .await
-            .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
-
-        Ok(model.as_ref().map(Self::model_to_user))
-    }
-
-    async fn find_by_id(&self, id: &UserId) -> Result<Option<User>> {
-        let model = sea_orm_entity::Entity::find()
-            .filter(sea_orm_entity::Column::UserId.eq(id.as_str()))
-            .one(self.conn)
-            .await
-            .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
-
-        Ok(model.as_ref().map(Self::model_to_user))
-    }
+/// 数据映射器 — `SeaORM` Model → 领域 User
+fn model_to_user(model: &sea_orm_entity::Model) -> User {
+    User::new(
+        UserId::new(model.user_id.as_str()),
+        Username::new_unchecked(model.username.as_str()),
+        Password::new_unchecked(model.password.as_str()),
+        Role::new_unchecked(model.role.as_str()),
+    )
 }
 
 /// 默认测试用户数据（仅用于数据库种子数据初始化）

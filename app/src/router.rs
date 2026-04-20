@@ -4,7 +4,6 @@ use anyhow::Context;
 use my_casbin::rbac::create_casbin_hoop;
 use my_config::config::get_cfg;
 use my_demo::init_database_schema;
-use my_jwt::jwt_utils::middleware::jwt_auth;
 use my_orm::init_db;
 use my_server_handle::graceful_stop;
 use salvo::{Router, affix_state, prelude::*};
@@ -37,7 +36,6 @@ pub async fn init_router() -> anyhow::Result<Router> {
         .push(Router::with_path("login").post(login))
         .push(
             Router::new()
-                .hoop(jwt_auth)
                 .hoop(casbin_hoop)
                 .push(Router::with_path("profile").get(profile))
                 .push(Router::with_path("stop/{secs}").get(graceful_stop)),

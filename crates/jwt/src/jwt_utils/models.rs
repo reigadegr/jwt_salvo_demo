@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 // role: 用户角色类型
 // username: 用户ID
 // exp: 过期时间
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
     pub role: String,
     pub username: String,

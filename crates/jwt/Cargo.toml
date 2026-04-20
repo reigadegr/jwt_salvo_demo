@@ -11,6 +11,5 @@ my_ext.workspace = true
 salvo.workspace = true
 serde.workspace = true
 jsonwebtoken.workspace = true
-stringzilla.workspace = true
 anyhow.workspace = true
 chrono.workspace = true

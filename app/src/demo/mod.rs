@@ -1,6 +1,6 @@
 use my_demo::dto::LoginRequest;
 use my_ext::result::{render_error, render_success};
-use my_jwt::jwt_utils::get_claims;
+use my_jwt::jwt_utils::get_user_info;
 use salvo::{http::StatusCode, prelude::*};
 use sea_orm::DatabaseConnection;
 
@@ -46,7 +46,7 @@ pub async fn login(req: &mut Request, res: &mut Response, depot: &Depot) {
 /// 获取当前用户信息端点
 #[endpoint]
 pub async fn profile(res: &mut Response, depot: &Depot) {
-    match get_claims(depot) {
+    match get_user_info(depot) {
         Ok(user) => render_success(res, user, "成功获取用户信息"),
         Err(_) => render_error(
             res,

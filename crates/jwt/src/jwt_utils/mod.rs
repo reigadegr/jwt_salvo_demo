@@ -3,13 +3,13 @@ pub mod secret_key;
 
 use std::any::Any;
 
-use models::Claims;
+use models::{Claims, UserInfo};
 use salvo::Depot;
 
-pub fn save_claims(depot: &mut Depot, claims: Claims) {
-    depot.insert("claims", claims);
+pub fn save_user_info(depot: &mut Depot, claims: &Claims) {
+    depot.insert("user_info", claims.to_user_info());
 }
 
-pub fn get_claims(depot: &Depot) -> Result<&Claims, Option<&Box<dyn Any + Send + Sync>>> {
-    depot.get::<Claims>("claims")
+pub fn get_user_info(depot: &Depot) -> Result<&UserInfo, Option<&Box<dyn Any + Send + Sync>>> {
+    depot.get::<UserInfo>("user_info")
 }

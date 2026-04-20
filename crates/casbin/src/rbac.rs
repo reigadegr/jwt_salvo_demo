@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use casbin::{CoreApi, DefaultModel, Enforcer, StringAdapter};
-use my_jwt::jwt_utils::{save_claims, secret_key::get_jwt_utils};
+use my_jwt::jwt_utils::{save_user_info, secret_key::get_jwt_utils};
 use salvo::{Depot, Request, http::StatusError};
 use salvo_casbin::{CasbinHoop, CasbinVals};
 
@@ -39,7 +39,7 @@ pub async fn create_casbin_hoop(
             req.method().as_str()
         );
 
-        save_claims(depot, claims.clone());
+        save_user_info(depot, &claims);
 
         Ok(Some(CasbinVals {
             subject: claims.role,

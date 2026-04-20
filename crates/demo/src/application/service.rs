@@ -1,14 +1,16 @@
 use anyhow::Result;
-use sea_orm::DatabaseConnection;
 
 use crate::{
     application::dto::{LoginRequest, LoginResponse, UserProfile},
-    domain::{entity::User, service::authenticate},
+    domain::{entity::User, repository::UserRepository, service::authenticate},
 };
 
-/// 登录用例 — 返回 token
-pub async fn login(conn: &DatabaseConnection, req: &LoginRequest) -> Result<Option<LoginResponse>> {
-    let Some(user) = authenticate(conn, &req.username, &req.password).await? else {
+/// 登录用例
+pub async fn login<R: UserRepository + Sync>(
+    repo: &R,
+    req: &LoginRequest,
+) -> Result<Option<LoginResponse>> {
+    let Some(user) = authenticate(repo, &req.username, &req.password).await? else {
         return Ok(None);
     };
 
@@ -25,7 +27,6 @@ pub fn get_profile(user: &User) -> UserProfile {
     }
 }
 
-/// Token 生成 — 基础设施关注点
 fn generate_token(user: &User) -> Result<String> {
     use my_jwt::jwt_utils::secret_key::get_jwt_utils;
 

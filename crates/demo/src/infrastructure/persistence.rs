@@ -8,42 +8,51 @@ use my_entities::{
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 use crate::domain::{
-    entity::{User, UserId},
-    value_object::{Password, Role, Username},
+    entity::{Password, Role, User, UserId, Username},
+    repository::UserRepository,
 };
 
-/// 根据用户名查找用户 — 数据库查询
-pub async fn find_user_by_username(
-    conn: &DatabaseConnection,
-    username: &str,
-) -> Result<Option<User>> {
-    let model = Users::find()
-        .filter(Column::Username.eq(username))
-        .one(conn)
-        .await
-        .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
-
-    Ok(model.as_ref().map(model_to_user))
+/// 基于 `SeaORM` 的用户仓储实现
+#[must_use]
+pub struct UserRepo {
+    conn: DatabaseConnection,
 }
 
-/// 根据 ID 查找用户 — 数据库查询
-pub async fn find_user_by_id(conn: &DatabaseConnection, id: &UserId) -> Result<Option<User>> {
-    let model = Users::find()
-        .filter(Column::UserId.eq(id.as_str()))
-        .one(conn)
-        .await
-        .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
-
-    Ok(model.as_ref().map(model_to_user))
+impl UserRepo {
+    #[allow(clippy::missing_const_for_fn)]
+    pub fn new(conn: DatabaseConnection) -> Self {
+        Self { conn }
+    }
 }
 
-/// 数据映射器 — `SeaORM` Model → 领域 User
+impl UserRepository for UserRepo {
+    async fn find_by_username(&self, username: &str) -> Result<Option<User>> {
+        let model = Users::find()
+            .filter(Column::Username.eq(username))
+            .one(&self.conn)
+            .await
+            .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
+
+        Ok(model.as_ref().map(model_to_user))
+    }
+
+    async fn find_by_id(&self, id: &UserId) -> Result<Option<User>> {
+        let model = Users::find()
+            .filter(Column::UserId.eq(id.as_str()))
+            .one(&self.conn)
+            .await
+            .map_err(|e| anyhow::anyhow!("数据库查询失败: {e}"))?;
+
+        Ok(model.as_ref().map(model_to_user))
+    }
+}
+
 fn model_to_user(model: &Model) -> User {
     User::new(
         UserId::new(model.user_id.as_str()),
-        Username::new_unchecked(model.username.as_str()),
-        Password::new_unchecked(model.password.as_str()),
-        Role::new_unchecked(model.role.as_str()),
+        Username::new(model.username.as_str()),
+        Password::new(model.password.as_str()),
+        Role::new(model.role.as_str()),
     )
 }
 

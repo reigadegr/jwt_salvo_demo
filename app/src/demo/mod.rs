@@ -1,4 +1,4 @@
-use my_demo::dto::LoginRequest;
+use my_demo::{application::dto::LoginRequest, infrastructure::persistence::UserRepo};
 use my_ext::result::{render_error, render_success};
 use my_jwt::jwt_utils::get_user_info;
 use salvo::{http::StatusCode, prelude::*};
@@ -32,7 +32,8 @@ pub async fn login(req: &mut Request, res: &mut Response, depot: &Depot) {
     #[cfg(debug_assertions)]
     println!("{login_req:?}");
 
-    match my_demo::facade::login(db, &login_req).await {
+    let repo = UserRepo::new(db.clone());
+    match my_demo::application::service::login(&repo, &login_req).await {
         Ok(Some(resp)) => render_success(res, &resp.token, "成功生成token"),
         Ok(None) => render_error(res, "Invalid credentials", StatusCode::UNAUTHORIZED),
         Err(_) => render_error(

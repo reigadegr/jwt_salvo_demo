@@ -1,15 +1,14 @@
 use anyhow::Result;
-use sea_orm::DatabaseConnection;
 
-use crate::{domain::entity::User, infrastructure::persistence::find_user_by_username};
+use crate::domain::{entity::User, repository::UserRepository};
 
-/// 认证用户 — 返回认证成功的用户，失败返回 None
-pub async fn authenticate(
-    conn: &DatabaseConnection,
+/// 认证用户 — 依赖仓储抽象，返回认证成功的用户，失败返回 None
+pub async fn authenticate<R: UserRepository + Sync>(
+    repo: &R,
     username: &str,
     password: &str,
 ) -> Result<Option<User>> {
-    let Some(user) = find_user_by_username(conn, username).await? else {
+    let Some(user) = repo.find_by_username(username).await? else {
         return Ok(None);
     };
     if user.verify_password(password) {

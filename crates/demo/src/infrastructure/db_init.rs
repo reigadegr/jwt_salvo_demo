@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
 use log::info;
 use sea_orm::{
-    ActiveModelTrait, ActiveValue::Set, ConnectionTrait, DatabaseConnection, DbBackend,
-    EntityTrait, PaginatorTrait, Schema, Statement,
+    ActiveValue::Set, ConnectionTrait, DatabaseConnection, DbBackend, EntityTrait, PaginatorTrait,
+    Schema, Statement,
 };
 use uuid::Uuid;
 
@@ -88,24 +88,21 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
 
     info!("开始插入默认用户数据...");
 
-    for raw in DEFAULT_USER_RAW_DATA.iter() {
-        let id = Uuid::now_v7();
-
-        let new_user = sea_orm_entity::ActiveModel {
-            id: Set(id),
+    let users: Vec<_> = DEFAULT_USER_RAW_DATA
+        .iter()
+        .map(|raw| sea_orm_entity::ActiveModel {
+            id: Set(Uuid::now_v7()),
             user_id: Set(raw.user_id.to_string()),
             username: Set(raw.username.to_string()),
             password: Set(raw.password.to_string()),
             role: Set(raw.role.to_string()),
-        };
+        })
+        .collect();
 
-        new_user
-            .insert(conn)
-            .await
-            .with_context(|| format!("插入用户 {} 失败", raw.username))?;
-
-        info!("已插入默认用户: {} (id: {})", raw.username, id);
-    }
+    sea_orm_entity::Entity::insert_many(users)
+        .exec(conn)
+        .await
+        .context("批量插入默认用户数据失败")?;
 
     info!(
         "默认用户数据插入完成，共 {} 条",

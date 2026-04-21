@@ -73,7 +73,14 @@ pub async fn shutdown_signal() {
 }
 
 /// 优雅停止端点 - 基础设施层关注点
-#[endpoint]
+///
+/// # Parameters
+/// - `secs`: 延迟停止的秒数，默认为 1 秒
+#[endpoint(
+    parameters(
+        ("secs", description = "延迟停止的秒数")
+    )
+)]
 pub async fn graceful_stop(req: &Request, res: &mut Response) {
     let time = req.param::<u64>("secs").unwrap_or(1);
     tokio::spawn(async move {

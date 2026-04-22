@@ -27,7 +27,7 @@ pub async fn init_router() -> anyhow::Result<Router> {
         .await
         .context("Failed to initialize database schema")?;
 
-    let router = Router::new()
+    let router = Router::with_path("api/v1")
         .hoop(Logger::new())
         .hoop(affix_state::inject(conn))
         .goal(hello)

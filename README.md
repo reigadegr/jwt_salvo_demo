@@ -5,7 +5,7 @@
 ## 运行
 ```shell
 cargo run
-sh test.sh
+sh full_test.sh
 ```
 - 脚本响应:
 ```txt

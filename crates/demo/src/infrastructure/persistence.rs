@@ -56,16 +56,24 @@ fn model_to_user(model: &Model) -> User {
     )
 }
 
-/// 默认用户原始数据 — 用于数据库种子插入
-pub static DEFAULT_USER_RAW_DATA: LazyLock<Vec<RawUserData>> = LazyLock::new(|| {
+/// 种子用户数据 — 用于数据库初始化
+pub struct SeedUser {
+    pub user_id: &'static str,
+    pub username: &'static str,
+    pub password: &'static str,
+    pub role: &'static str,
+}
+
+/// 默认用户数据 — 用于数据库种子插入
+pub static DEFAULT_USERS: LazyLock<Vec<SeedUser>> = LazyLock::new(|| {
     vec![
-        RawUserData {
+        SeedUser {
             user_id: "1",
             username: "user1",
             password: "password1",
             role: "token-admin",
         },
-        RawUserData {
+        SeedUser {
             user_id: "2",
             username: "user2",
             password: "password2",
@@ -73,11 +81,3 @@ pub static DEFAULT_USER_RAW_DATA: LazyLock<Vec<RawUserData>> = LazyLock::new(|| 
         },
     ]
 });
-
-/// 原始用户数据 — 基础设施层专用
-pub struct RawUserData {
-    pub user_id: &'static str,
-    pub username: &'static str,
-    pub password: &'static str,
-    pub role: &'static str,
-}

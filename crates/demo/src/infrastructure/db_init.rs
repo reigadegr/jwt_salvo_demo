@@ -5,7 +5,7 @@ use my_schema::ensure_table_exists;
 use sea_orm::{ActiveValue::Set, DatabaseConnection, EntityTrait, PaginatorTrait};
 use uuid::Uuid;
 
-use crate::infrastructure::persistence::DEFAULT_USER_RAW_DATA;
+use crate::infrastructure::persistence::DEFAULT_USERS;
 
 /// 初始化用户数据库架构
 ///
@@ -36,14 +36,14 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
 
     info!("开始插入默认用户数据...");
 
-    let users: Vec<_> = DEFAULT_USER_RAW_DATA
+    let users: Vec<_> = DEFAULT_USERS
         .iter()
-        .map(|raw| ActiveModel {
+        .map(|seed| ActiveModel {
             id: Set(Uuid::now_v7()),
-            user_id: Set(raw.user_id.to_string()),
-            username: Set(raw.username.to_string()),
-            password: Set(raw.password.to_string()),
-            role: Set(raw.role.to_string()),
+            user_id: Set(seed.user_id.to_string()),
+            username: Set(seed.username.to_string()),
+            password: Set(seed.password.to_string()), // 注意：这里需要改进，实际应该存储哈希后的密码
+            role: Set(seed.role.to_string()),
         })
         .collect();
 
@@ -52,10 +52,7 @@ async fn ensure_default_data_exists(conn: &DatabaseConnection) -> Result<()> {
         .await
         .context("批量插入默认用户数据失败")?;
 
-    info!(
-        "默认用户数据插入完成，共 {} 条",
-        DEFAULT_USER_RAW_DATA.len()
-    );
+    info!("默认用户数据插入完成，共 {} 条", DEFAULT_USERS.len());
     Ok(())
 }
 
@@ -67,8 +64,8 @@ mod tests {
 
     #[test]
     fn test_default_users_exist() {
-        assert!(!DEFAULT_USER_RAW_DATA.is_empty());
-        assert_eq!(DEFAULT_USER_RAW_DATA.len(), 2);
+        assert!(!DEFAULT_USERS.is_empty());
+        assert_eq!(DEFAULT_USERS.len(), 2);
     }
 
     #[test]

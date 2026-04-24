@@ -8,13 +8,10 @@ workspace = true
 
 [dependencies]
 my_jwt_core.workspace = true
-my_ext.workspace = true
 my_entities.workspace = true
 my_schema.workspace = true
 anyhow.workspace = true
 serde.workspace = true
-salvo.workspace = true
 sea-orm.workspace = true
-tokio.workspace = true
 log.workspace = true
 uuid.workspace = true

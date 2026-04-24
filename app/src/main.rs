@@ -2,7 +2,7 @@ mod demo;
 mod router;
 
 use my_config::config::init_config;
-use my_jwt::jwt_utils::secret_key::init_jwt_utils;
+use my_jwt_core::jwt_utils::secret_key::init_jwt_utils;
 use my_server_handle::init_server;
 use obfstr::{obfbytes, obfstr};
 

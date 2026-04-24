@@ -1,7 +1,8 @@
 [workspace]
 members = [
   "app",
-  "crates/jwt",
+  "crates/jwt/jwt-core",
+  "crates/jwt/jwt-middleware",
   "crates/casbin",
   "crates/config",
   "crates/server_handle",
@@ -36,7 +37,8 @@ cast_precision_loss = "allow"
 struct_excessive_bools = "allow"
 
 [workspace.dependencies]
-my_jwt = { path = "crates/jwt" }
+my_jwt = { path = "crates/jwt/jwt-middleware" }
+my_jwt_core = { path = "crates/jwt/jwt-core" }
 my_casbin = { path = "crates/casbin" }
 my_config = { path = "crates/config" }
 my_server_handle = { path = "crates/server_handle" }

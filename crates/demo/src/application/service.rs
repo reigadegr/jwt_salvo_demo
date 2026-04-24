@@ -28,7 +28,7 @@ pub fn get_profile(user: &User) -> UserProfile {
 }
 
 fn generate_token(user: &User) -> Result<String> {
-    use my_jwt::jwt_utils::secret_key::get_jwt_utils;
+    use my_jwt_core::jwt_utils::secret_key::get_jwt_utils;
 
     let jwt_utils = get_jwt_utils()?;
     jwt_utils

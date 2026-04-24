@@ -7,9 +7,5 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
-my_ext.workspace = true
+my_jwt_core.workspace = true
 salvo.workspace = true
-serde.workspace = true
-jsonwebtoken.workspace = true
-anyhow.workspace = true
-chrono.workspace = true

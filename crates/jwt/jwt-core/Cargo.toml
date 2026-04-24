@@ -1,0 +1,13 @@
+[package]
+name = "my_jwt_core"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+serde.workspace = true
+jsonwebtoken.workspace = true
+anyhow.workspace = true
+chrono.workspace = true

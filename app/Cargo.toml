@@ -9,6 +9,7 @@ workspace = true
 [dependencies]
 my_ext.workspace = true
 my_jwt.workspace = true
+my_jwt_core.workspace = true
 my_casbin.workspace = true
 my_config.workspace = true
 my_server_handle.workspace = true

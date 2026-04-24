@@ -1,6 +1,6 @@
 use my_demo::{application::dto::LoginRequest, infrastructure::persistence::UserRepo};
 use my_ext::result::{render_error, render_success};
-use my_jwt::jwt_utils::get_user_info;
+use my_jwt::get_user_info;
 use salvo::{http::StatusCode, prelude::*};
 use sea_orm::DatabaseConnection;
 

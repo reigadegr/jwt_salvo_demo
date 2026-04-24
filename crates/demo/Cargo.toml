@@ -7,7 +7,7 @@ edition.workspace = true
 workspace = true
 
 [dependencies]
-my_jwt.workspace = true
+my_jwt_core.workspace = true
 my_ext.workspace = true
 my_entities.workspace = true
 my_schema.workspace = true

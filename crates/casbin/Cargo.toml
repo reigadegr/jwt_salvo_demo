@@ -9,6 +9,7 @@ workspace = true
 [dependencies]
 anyhow.workspace = true
 my_jwt.workspace = true
+my_jwt_core.workspace = true
 salvo.workspace = true
 salvo-casbin.workspace = true
 casbin.workspace = true

@@ -5,7 +5,6 @@ use std::{fmt, io::IsTerminal};
 use chrono::Local;
 use my_config::config::get_cfg;
 use salvo::{conn::tcp::TcpAcceptor, prelude::*};
-pub use shutdown_handle::graceful_stop;
 use shutdown_handle::{init_handle, shutdown_signal};
 use tracing_subscriber::{
     EnvFilter,

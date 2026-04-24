@@ -5,7 +5,7 @@ use my_casbin::rbac::create_casbin_hoop;
 use my_config::config::get_cfg;
 use my_demo::init_database_schema;
 use my_orm::init_db;
-use my_server_handle::graceful_stop;
+use my_server_handle::shutdown_handle::graceful_stop;
 use salvo::{Router, affix_state, prelude::*};
 
 use crate::demo::{hello, login, profile};

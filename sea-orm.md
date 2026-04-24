@@ -10,5 +10,5 @@ echo "DATABASE_URL=sqlite://target/jsd.db" | tee .env
 
 ## 使用
 ```sh
-sea-orm-cli generate entity --with-serde=both -o crates/entities/src
+sea-orm-cli generate entity --with-serde=both -o biz/entities/src
 ```

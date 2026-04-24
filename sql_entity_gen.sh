@@ -2,7 +2,7 @@
 
 set -eu
 
-dir="crates/entities/src"
+dir="biz/entities/src"
 
 # 默认使用 SQLite（从 .env 文件读取或使用默认值）
 DATABASE_URL="${1:-}"
